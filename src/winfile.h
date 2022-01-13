@@ -511,8 +511,6 @@ VOID  LoadFailMessage(VOID);
 UINT  FillDocType(PPDOCBUCKET ppDoc, LPCWSTR pszSection, LPCWSTR pszDefault);
 BOOL  CheckDirExists(LPWSTR szDir);
 
-DWORD StartBuildingDirectoryTrie();
-
 
 // WFCOPY.C
 
@@ -600,8 +598,6 @@ INT_PTR CALLBACK ConfirmDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lPar
 INT_PTR CALLBACK PrefDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK AboutDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam);
 INT_PTR CALLBACK GotoDirDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam);
-
-VOID SetCurrentPathOfWindow(LPWSTR szPath);
 
 // WFSEARCH.C
 
@@ -1149,7 +1145,6 @@ Extern BOOL   bJapan      EQ( FALSE );
 JAPANEND
 
 Extern BOOL bMinOnRun        EQ( FALSE );
-Extern BOOL bIndexOnLaunch   EQ( TRUE );
 Extern BOOL bStatusBar       EQ( TRUE );
 
 Extern BOOL bDriveBar            EQ( TRUE );

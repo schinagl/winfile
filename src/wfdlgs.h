@@ -61,7 +61,6 @@
 #define UNCOMPRESSPROGDLG       58
 #define COMPRESSERRDLG          59  //  Compression Error Dialog
 
-#define GOTODIRDLG              60
 #define ABOUTDLG                61
 #define FORMATSELECTDLG         62
 
@@ -162,8 +161,7 @@
 #define IDC_EDITOR          275
 #define IDC_VSTYLE          276
 #define IDC_LANGCB          277
-#define IDC_GOTO            278
-#define IDC_MIRROR            280
+#define IDC_MIRROR          280
 
 #define IDD_ENCRYPTED       279
 
@@ -208,8 +206,6 @@
 #define IDD_UNCOMPRESS_TDIRS   353
 #define IDD_UNCOMPRESS_TFILES  354
 
-#define IDD_GOTODIR        355
-#define IDD_GOTOLIST       356
 #define IDD_SELECTDRIVE    357
 
 #define IDD_ASSOCFIRST     100

@@ -217,7 +217,6 @@ GetSettings()
 
    /* Get the flags out of the INI file. */
    bMinOnRun            = GetPrivateProfileInt(szSettings, szMinOnRun,            bMinOnRun,            szTheINIFile);
-   bIndexOnLaunch       = GetPrivateProfileInt(szSettings, szIndexOnLaunch,       bIndexOnLaunch,       szTheINIFile);
    wTextAttribs         = (WORD)GetPrivateProfileInt(szSettings, szLowerCase,     wTextAttribs,         szTheINIFile);
    bStatusBar           = GetPrivateProfileInt(szSettings, szStatusBar,           bStatusBar,           szTheINIFile);
    bDisableVisualStyles = GetPrivateProfileInt(szSettings, szDisableVisualStyles, bDisableVisualStyles, szTheINIFile);
@@ -413,8 +412,6 @@ InitMenus()
       CheckMenuItem(hMenu, IDM_STATUSBAR, MF_BYCOMMAND | MF_CHECKED);
    if (bMinOnRun)
       CheckMenuItem(hMenu, IDM_MINONRUN,  MF_BYCOMMAND | MF_CHECKED);
-   if (bIndexOnLaunch)
-      CheckMenuItem(hMenu, IDM_INDEXONLAUNCH, MF_BYCOMMAND | MF_CHECKED);
 
    if (bSaveSettings)
       CheckMenuItem(hMenu, IDM_SAVESETTINGS,  MF_BYCOMMAND | MF_CHECKED);
@@ -449,6 +446,7 @@ UINT
 MapIDMToMenuPos(UINT idm)
 {
     UINT pos;
+    HWND hwndActive;
 
     if (idm < 100)
     {
@@ -462,7 +460,6 @@ MapIDMToMenuPos(UINT idm)
     }
 
     // if maximized, menu position shifted one to the right
-    HWND hwndActive;
     hwndActive = (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, 0L);
     if (hwndActive && GetWindowLongPtr(hwndActive, GWL_STYLE) & WS_MAXIMIZE)
         pos++;
@@ -1550,11 +1547,6 @@ JAPANEND
    //    FillToolbarDrives(GetSelectedDrive());
 
    SetThreadPriority(hThread, THREAD_PRIORITY_NORMAL);
-
-   if (bIndexOnLaunch)
-   {
-      StartBuildingDirectoryTrie();
-   }
 
    return TRUE;
 }

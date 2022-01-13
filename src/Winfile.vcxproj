@@ -30,7 +30,7 @@
     <ProjectGuid>{028400E7-500A-4FB9-877F-F6C7AE24F109}</ProjectGuid>
     <RootNamespace>Winfile</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
     <WindowsSDKDesktopARMSupport>true</WindowsSDKDesktopARMSupport>
     <WindowsSDKDesktopARM64Support>true</WindowsSDKDesktopARM64Support>
   </PropertyGroup>
@@ -314,7 +314,6 @@
     <ClInclude Include="dbg.h" />
     <ClInclude Include="fmifs.h" />
     <ClInclude Include="lfn.h" />
-    <ClInclude Include="BagOValues.h" />
     <ClInclude Include="mpr.h" />
     <ClInclude Include="numfmt.h" />
     <ClInclude Include="res.h" />
@@ -408,7 +407,6 @@
     <ClCompile Include="wfdrop.c" />
     <ClCompile Include="wfext.c" />
     <ClCompile Include="wffile.c" />
-    <ClCompile Include="wfgoto.cpp" />
     <ClCompile Include="wfinfo.c" />
     <ClCompile Include="wfinit.c" />
     <ClCompile Include="wfloc.c" />

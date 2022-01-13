@@ -90,9 +90,7 @@
 #define IDM_EDIT            122
 #define IDM_CUTTOCLIPBOARD  123
 #define IDM_STARTCMDSHELL   124
-#define IDM_GOTODIR         125
-#define IDM_HISTORYBACK     126
-#define IDM_HISTORYFWD      127
+
 #define IDM_STARTPOWERSHELL 128
 #define IDM_STARTBASHSHELL  129
 #define IDM_CLOSEWINDOW     130
@@ -167,8 +165,6 @@
 #ifdef PROGMAN
 #define IDM_SAVENOW         513
 #endif
-
-#define IDM_INDEXONLAUNCH   514
 
 #define IDM_PREF          515
 

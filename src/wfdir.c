@@ -67,10 +67,10 @@ DrawItem(
 
    HDC hDC = lpLBItem->hDC;
 
-   PreserveBitmapInRTL(hDC);
-
    HWND hwndListParms = (HWND)GetWindowLongPtr(hwnd, GWL_LISTPARMS);
    BOOL bLower;
+
+   PreserveBitmapInRTL(hDC);
 
    //
    // Print out any errors

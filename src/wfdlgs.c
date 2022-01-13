@@ -717,10 +717,8 @@ INT_PTR CALLBACK PrefDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam)
     TCHAR szTempEditPath[MAXPATHLEN];
     TCHAR szPath[MAXPATHLEN];
     TCHAR szFilter[MAXPATHLEN] = { 0 };
-
-    LoadString(hAppInstance, IDS_EDITFILTER, szFilter, MAXPATHLEN);
-
     OPENFILENAME ofn;
+    HWND hLangComboBox;
 
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.lStructSize = sizeof(ofn);
@@ -736,7 +734,9 @@ INT_PTR CALLBACK PrefDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam)
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
     /* Language prefrence variables */
-    HWND hLangComboBox = GetDlgItem(hDlg, IDC_LANGCB);
+    hLangComboBox = GetDlgItem(hDlg, IDC_LANGCB);
+
+    LoadString(hAppInstance, IDS_EDITFILTER, szFilter, MAX_PATH);
 
     switch (wMsg)
     {
@@ -747,7 +747,6 @@ INT_PTR CALLBACK PrefDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam)
             SetDlgItemText(hDlg, IDD_EDITOR, szTempEditPath);
 
             CheckDlgButton(hDlg, IDC_VSTYLE, bDisableVisualStyles);
-            CheckDlgButton(hDlg, IDC_GOTO, bIndexOnLaunch);
             CheckDlgButton(hDlg, IDC_MIRROR, bMirrorContent);
             break;
 
@@ -775,11 +774,9 @@ INT_PTR CALLBACK PrefDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam)
                     WritePrivateProfileString(szSettings, szEditorPath, szTempEditPath, szTheINIFile);
 
                     bDisableVisualStyles = IsDlgButtonChecked(hDlg, IDC_VSTYLE);
-                    bIndexOnLaunch       = IsDlgButtonChecked(hDlg, IDC_GOTO);
                     bMirrorContent           = IsDlgButtonChecked(hDlg, IDC_MIRROR);
 
                     WritePrivateProfileBool(szDisableVisualStyles, bDisableVisualStyles);
-                    WritePrivateProfileBool(szIndexOnLaunch, bIndexOnLaunch);
                     WritePrivateProfileBool(szMirrorContent, bMirrorContent);
 
                     EndDialog(hDlg, TRUE);
@@ -846,63 +843,62 @@ KillQuoteTrailSpace( LPTSTR szFile )
 VOID
 ActivateCommonContextMenu(HWND hwnd, HWND hwndLB, LPARAM lParam)
 {
-   DWORD cmd, item;
-   POINT pt;
+	DWORD cmd, item;
+	POINT pt;
 
-   HMENU hMenu = GetSubMenu(LoadMenu(hAppInstance, TEXT("CTXMENU")), 0);
+	HMENU hMenu = GetSubMenu(LoadMenu(hAppInstance, TEXT("CTXMENU")), 0);
 
-   if (lParam == -1)
-   {
-      RECT rect;
+	if (lParam == -1)
+	{
+		RECT rect;
 
-      item = (DWORD)SendMessage(hwndLB, LB_GETCURSEL, 0, 0);
-      SendMessage(hwndLB, LB_GETITEMRECT, (WPARAM)LOWORD(item), (LPARAM)&rect);
-      pt.x = rect.left;
-      pt.y = rect.bottom;
-      ClientToScreen(hwnd, &pt);
-      lParam = POINTTOPOINTS(pt);
-   }
-   else
-   {
-      POINTSTOPOINT(pt, lParam);
+		item = (DWORD)SendMessage(hwndLB, LB_GETCURSEL, 0, 0);
+		SendMessage(hwndLB, LB_GETITEMRECT, (WPARAM)LOWORD(item), (LPARAM)&rect);
+		pt.x = rect.left;
+		pt.y = rect.bottom;
+		ClientToScreen(hwnd, &pt);
+		lParam = POINTTOPOINTS(pt);
+	}
+	else
+	{
+		POINTSTOPOINT(pt, lParam);
 
-      ScreenToClient(hwndLB, &pt);
-      item = (DWORD)SendMessage(hwndLB, LB_ITEMFROMPOINT, 0, POINTTOPOINTS(pt));
+		ScreenToClient(hwndLB, &pt);
+		item = (DWORD)SendMessage(hwndLB, LB_ITEMFROMPOINT, 0, POINTTOPOINTS(pt));
 
-      if (HIWORD(item) == 0)
-      {
-         HWND hwndTree, hwndParent;
+		if (HIWORD(item) == 0)
+		{
+			HWND hwndTree, hwndParent;
 
-         SetFocus(hwnd);
+			SetFocus(hwnd);
 
-         hwndParent = GetParent(hwnd);
-         hwndTree = HasTreeWindow(hwndParent);
+			hwndParent = GetParent(hwnd);
+			hwndTree = HasTreeWindow(hwndParent);
 
-         // if hwnd is the tree control within the parent window
-         if (hwndTree == hwnd) {
-            // tree control; do selection differently
-            SendMessage(hwndLB, LB_SETCURSEL, (WPARAM)item, 0L);
-            SendMessage(hwnd, WM_COMMAND, GET_WM_COMMAND_MPS(0, hwndLB, LBN_SELCHANGE));
-         }
-         else
-         {
-            SendMessage(hwndLB, LB_SETSEL, (WPARAM)FALSE, (LPARAM)-1);
-            SendMessage(hwndLB, LB_SETSEL, (WPARAM)TRUE, (LPARAM)item);
+			// if hwnd is the tree control within the parent window
+			if (hwndTree == hwnd) {
+				// tree control; do selection differently
+				SendMessage(hwndLB, LB_SETCURSEL, (WPARAM)item, 0L);
+				SendMessage(hwnd, WM_COMMAND, GET_WM_COMMAND_MPS(0, hwndLB, LBN_SELCHANGE));
+			}
+			else {
+				BOOL bDir = FALSE;
+				SendMessage(hwndLB, LB_SETSEL, (WPARAM)FALSE, (LPARAM)-1);
+				SendMessage(hwndLB, LB_SETSEL, (WPARAM)TRUE, (LPARAM)item);
 
-            BOOL bDir = FALSE;
-            SendMessage(hwnd, FS_GETSELECTION, 5, (LPARAM)&bDir);
-            if (bDir)
+                SendMessage(hwnd, FS_GETSELECTION, 5, (LPARAM)&bDir);
+                if (bDir)
             {
-               EnableMenuItem(hMenu, IDM_EDIT, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+                    EnableMenuItem(hMenu, IDM_EDIT, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
             }
-         }
-      }
+		}
+	}
    }
 
-   cmd = TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hwnd, NULL);
+	cmd = TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hwnd, NULL);
    if (cmd != 0) {
-      PostMessage(hwndFrame, WM_COMMAND, GET_WM_COMMAND_MPS(cmd, 0, 0));
+		PostMessage(hwndFrame, WM_COMMAND, GET_WM_COMMAND_MPS(cmd, 0, 0));
    }
 
-   DestroyMenu(hMenu);
+	DestroyMenu(hMenu);
 }

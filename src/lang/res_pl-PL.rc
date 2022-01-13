@@ -43,7 +43,6 @@ BEGIN
     MENUITEM    "Uruchom &PowerShell...\tCtrl+P", IDM_STARTPOWERSHELL
     MENUITEM    "Uruchom &Explorer...\tCtrl+E",   IDM_STARTEXPLORER
     END
-    MENUITEM    "Skocz do kata&logu...\tCtrl+G",  IDM_GOTODIR
     MENUITEM    SEPARATOR
     MENUITEM    "Za&kończ",                       IDM_EXIT
     END
@@ -97,7 +96,6 @@ BEGIN
     MENUITEM    "Pa&sek stanu",                               IDM_STATUSBAR
     MENUITEM    SEPARATOR
     MENUITEM    "&Minimalizuj podczas pracy",                 IDM_MINONRUN
-    MENUITEM    "Twórz indeks katalogów przy &uruchomieniu",  IDM_INDEXONLAUNCH
     MENUITEM    "Z&apisz ustawienia przy zakończeniu",        IDM_SAVESETTINGS
 #ifdef PROGMAN
     MENUITEM    SEPARATOR
@@ -152,7 +150,6 @@ BEGIN
     MENUITEM    "U&ruchom Wiersz polecenia...",   IDM_STARTCMDSHELL
     MENUITEM    "Uruchom Po&werShell...",         IDM_STARTPOWERSHELL
     MENUITEM    "Uruchom E&xplorer...",           IDM_STARTEXPLORER
-    MENUITEM    "Skocz do kata&logu...\tCtrl+G",  IDM_GOTODIR
     END
 END
 
@@ -519,7 +516,7 @@ JAPANEND
     IDS_COMPRESS_ATTRIB_ERR     "Menedżer plików nie może zmienić atrybutów kompresji dla %s."
     IDS_NTLDRCOMPRESSERR        "Plik %s nie zostanie skompresowany. Kompresja tego pliku może spowodować, że rozruch systemu nie będzie możliwy."
     IDS_MULTICOMPRESSERR        "Menedżer plików dokonuje obecnie kompresji/dekompresji plików.\nMusisz poczekać na zakończenie procesu przed próbą kompresji/dekompresji dalszych plików."
-
+      
     IDS_EDITFILTER              "Programy (*.exe)\0*.exe\0"
 
 END
@@ -608,7 +605,6 @@ BEGIN
     MH_MYITEMS+IDM_NEWWINONCONNECT,  "Otwiera nowe okno przy podłączaniu"
 
     MH_MYITEMS+IDM_MINONRUN,         "Minimalizuje Menedżera plików przy uruchomieniu"
-    MH_MYITEMS+IDM_INDEXONLAUNCH,    "Tworzy indeks dla polecenia Skocz do katalogu, gdy Menedżer plików zostanie uruchomiony"
     MH_MYITEMS+IDM_SAVESETTINGS,     "Zapisuje ustawienia po zakończeniu pracy z Menedżerem plików"
 
     MH_MYITEMS+IDM_NEWWINDOW,        "Otwiera nowe okno"

@@ -532,10 +532,14 @@ CreateDirWindow(
    // Are we replacing the contents of the currently active child?
    //
    if (bReplaceOpen) {
+
+       INT i;
+	   DRIVE drive;
+
 	   CharUpperBuff(szPath, 1);     // make sure
 
-	   DRIVE drive = DRIVEID(szPath);
-	   for (INT i = 0; i<cDrives; i++)
+	   drive = DRIVEID(szPath);
+	   for (i = 0; i<cDrives; i++)
 	   {
 		   if (drive == rgiDrive[i])
 		   {
@@ -796,6 +800,8 @@ BOOL
 GetPowershellExePath(LPTSTR szPSPath)
 {
     HKEY hkey;
+    INT ikey;
+
     if (ERROR_SUCCESS != RegOpenKey(HKEY_LOCAL_MACHINE, TEXT("SOFTWARE\\Microsoft\\PowerShell"), &hkey))
     {
         return FALSE;
@@ -803,7 +809,7 @@ GetPowershellExePath(LPTSTR szPSPath)
 
     szPSPath[0] = TEXT('\0');
 
-    for (int ikey = 0; ikey < 5; ikey++)
+    for (ikey = 0; ikey < 5; ikey++)
     {
         TCHAR         szSub[10];    // just the "1" or "3"
 
@@ -973,23 +979,6 @@ AppCommandProc(DWORD id)
 
       DialogBox(hAppInstance, (LPTSTR) MAKEINTRESOURCE(ASSOCIATEDLG), hwndFrame, AssociateDlgProc);
       break;
-
-   case IDM_GOTODIR:
-      DialogBox(hAppInstance, (LPTSTR)MAKEINTRESOURCE(GOTODIRDLG), hwndFrame, GotoDirDlgProc);
-	  break;
-
-   case IDM_HISTORYBACK:
-   case IDM_HISTORYFWD:
-       {
-	   HWND hwndT;
-	   if (GetPrevHistoryDir(id == IDM_HISTORYFWD, &hwndT, szPath))
-	   {
-		   // history is saved with wildcard spec; remove it
-		   StripFilespec(szPath);
-		   SetCurrentPathOfWindow(szPath);
-	   }
-	   }
-	   break;
 
    case IDM_SEARCH:
 
@@ -2038,11 +2027,6 @@ ChangeDisplay:
        WritePrivateProfileBool(szMinOnRun, bMinOnRun);
        goto CHECK_OPTION;
 
-    case IDM_INDEXONLAUNCH:
-       bTemp = bIndexOnLaunch = !bIndexOnLaunch;
-       WritePrivateProfileBool(szIndexOnLaunch, bIndexOnLaunch);
-       goto CHECK_OPTION;
-
 CHECK_OPTION:
        //
        // Check/Uncheck the menu item.
@@ -2124,8 +2108,6 @@ CHECK_OPTION:
           UpdateStatus(hwndActive);
 
           EnableDisconnectButton();
-
-		  StartBuildingDirectoryTrie();
 
           break;
        }

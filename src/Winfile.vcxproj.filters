@@ -26,7 +26,6 @@
     <ClCompile Include="wfdrop.c" />
     <ClCompile Include="wfext.c" />
     <ClCompile Include="wffile.c" />
-    <ClCompile Include="wfgoto.cpp" />
     <ClCompile Include="wfinfo.c" />
     <ClCompile Include="wfinit.c" />
     <ClCompile Include="wfmem.c" />
@@ -42,7 +41,6 @@
     <ClInclude Include="dbg.h" />
     <ClInclude Include="fmifs.h" />
     <ClInclude Include="lfn.h" />
-    <ClInclude Include="BagOValues.h" />
     <ClInclude Include="mpr.h" />
     <ClInclude Include="numfmt.h" />
     <ClInclude Include="spinlock.h" />

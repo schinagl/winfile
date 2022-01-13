@@ -43,7 +43,6 @@ BEGIN
             MENUITEM    "&Powershell'i Başlat...\tCtrl+P", IDM_STARTPOWERSHELL
             MENUITEM    "&Explorer'i Başlat...\tCtrl+E", IDM_STARTEXPLORER
         END
-        MENUITEM    "Dizine &Git...",               IDM_GOTODIR
         MENUITEM    SEPARATOR
         MENUITEM    "Çı&kış",                       IDM_EXIT
     END
@@ -97,7 +96,6 @@ BEGIN
         MENUITEM    "&Durum Çubuğu",                IDM_STATUSBAR
         MENUITEM    SEPARATOR
         MENUITEM    "K&ullanımda Simge Durumuna Küçült", IDM_MINONRUN
-        MENUITEM    "&Başlangıçta Şuna Git İndeksi Oluştur", IDM_INDEXONLAUNCH
         MENUITEM    "Çıkışta &Ayarları Kaydet",     IDM_SAVESETTINGS
 #ifdef PROGMAN
     MENUITEM    SEPARATOR
@@ -140,7 +138,7 @@ BEGIN
     MENUITEM    "&Taşı...\tF7",                     IDM_MOVE
     MENUITEM    "K&opyala...\tF8",                  IDM_COPY
     MENUITEM    "S&embolik bağlantı...\tF11",       IDM_SYMLINK
-    MENUITEM    "Sabi&t bağlantı...\tShift+F11",    IDM_HARDLINK
+    MENUITEM    "Sabi&t bağlantı...\tShift+F11",  IDM_HARDLINK
     MENUITEM    "&Pano'ya Kopyala\tCtrl+C",         IDM_COPYTOCLIPBOARD
     MENUITEM    "Pa&no'ya Kes\tCtrl+X",             IDM_CUTTOCLIPBOARD
     MENUITEM    "Yapıştı&r\tCtrl+V",                IDM_PASTE
@@ -152,7 +150,6 @@ BEGIN
     MENUITEM    "Cmd Kabuğu Başlat...",             IDM_STARTCMDSHELL
     MENUITEM    "Po&werShell Başlat...",            IDM_STARTPOWERSHELL
     MENUITEM    "E&xplorer Başlat...",              IDM_STARTEXPLORER
-    MENUITEM    "Dizine &Git...",                   IDM_GOTODIR
     END
 END
 
@@ -500,8 +497,8 @@ BEGIN
     MH_MYITEMS+IDM_MOVE,        "Seçili öğeyi taşır"
     MH_MYITEMS+IDM_COPY,        "Dosyaları ve dizinleri kopyalar"
     MH_MYITEMS+IDM_COPYTOCLIPBOARD, "Bir veya birden çok dosyayı panoya kopyalar"
-    MH_MYITEMS+IDM_CUTTOCLIPBOARD, "Bir veya birden çok dosyayı panoya keser"
-    MH_MYITEMS+IDM_PASTE,       "Panodan dosyayı geçerli dizine yapıştırır"
+	MH_MYITEMS+IDM_CUTTOCLIPBOARD, "Bir veya birden çok dosyayı panoya keser"
+    MH_MYITEMS+IDM_PASTE,		"Panodan dosyayı geçerli dizine yapıştırır"
     MH_MYITEMS+IDM_COMPRESS,    "Bir dosyayı veya dizini sıkıştırır"
     MH_MYITEMS+IDM_UNCOMPRESS,  "Bir dosyanın veya dizinin sıkıştırmasını açar"
     MH_MYITEMS+IDM_DELETE,      "Dosyalar ve dizinler siler"
@@ -555,7 +552,6 @@ BEGIN
     MH_MYITEMS+IDM_STATUSBAR,   "Durum çubuğunu görüntüler veya gizler"
     MH_MYITEMS+IDM_NEWWINONCONNECT, "Bağlandığınızda yeni bir pencere açar"
     MH_MYITEMS+IDM_MINONRUN,    "Başlangıçta Dosya Yöneticisi'ni simge durumunda tutar"
-    MH_MYITEMS + IDM_INDEXONLAUNCH, "Dosya Yöneticisi çalıştırıldığında Şuna Git Dizini için bir indeks oluşturur"
     MH_MYITEMS+IDM_SAVESETTINGS, "Dosya Yöneticisi'nden çıktığınızda ayarları kaydeded"
     MH_MYITEMS+IDM_NEWWINDOW,   "Yeni bir pencere açar"
     MH_MYITEMS+IDM_CASCADE,     "Pencereleri basamaklar"

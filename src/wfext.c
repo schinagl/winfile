@@ -361,6 +361,7 @@ FreeExtensions()
 {
    INT i;
    HMENU hMenuFrame;
+   UINT posToDelete;
 
    FreeToolbarExtensions();
 
@@ -368,7 +369,7 @@ FreeExtensions()
    hMenuFrame = GetMenu(hwndFrame);
 
    // we are going to delete all extensions and thus each one to delete is at the same place
-   UINT posToDelete = MapIDMToMenuPos(IDM_EXTENSIONS);
+   posToDelete = MapIDMToMenuPos(IDM_EXTENSIONS);
 
    for (i = 0; i < iNumExtensions; i++) {
       (extensions[i].ExtProc)(NULL, FMEVENT_UNLOAD, 0L);
