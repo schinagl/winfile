@@ -43,17 +43,21 @@ WFFindFirst(
    //
 
    PVOID oldValue;
+   oldValue = NULL;
+   if (Wow64DisableWow64FsRedirection != NULL)
+   {
    Wow64DisableWow64FsRedirection(&oldValue);
+   }
 
    if ((dwAttrFilter & ~(ATTR_DIR | ATTR_HS)) == 0)
    {
-       // directories only (hidden or not)
-       lpFind->hFindFile = FindFirstFileEx(lpName, FindExInfoStandard, &lpFind->fd, FindExSearchLimitToDirectories, NULL, 0);
+	   // directories only (hidden or not)
+	   lpFind->hFindFile = FindFirstFileEx(lpName, FindExInfoStandard, &lpFind->fd, FindExSearchLimitToDirectories, NULL, 0);
    }
    else
    {
-       // normal case: directories and files
-       lpFind->hFindFile = FindFirstFile(lpName, &lpFind->fd);
+	   // normal case: directories and files
+	   lpFind->hFindFile = FindFirstFile(lpName, &lpFind->fd);
    }
 
    if (lpFind->hFindFile == INVALID_HANDLE_VALUE) {
@@ -64,11 +68,14 @@ WFFindFirst(
 
    // add in attr_* which we want to include in the match even though the caller didn't request them.
    dwAttrFilter |= ATTR_ARCHIVE | ATTR_READONLY | ATTR_NORMAL | ATTR_REPARSE_POINT |
-       ATTR_TEMPORARY | ATTR_COMPRESSED | ATTR_ENCRYPTED | ATTR_NOT_INDEXED;
+	   ATTR_TEMPORARY | ATTR_COMPRESSED | ATTR_ENCRYPTED | ATTR_NOT_INDEXED;
 
    lpFind->fd.dwFileAttributes &= ATTR_USED;
 
+   if (Wow64RevertWow64FsRedirection != NULL)
+   {
    Wow64RevertWow64FsRedirection(oldValue);
+   }
 
    //
    // Keep track of length
@@ -116,12 +123,16 @@ WFFindFirst(
 BOOL
 WFFindNext(LPLFNDTA lpFind)
 {
-   PVOID oldValue;
-   Wow64DisableWow64FsRedirection(&oldValue);
-
+	PVOID oldValue;
+   oldValue = NULL;
+   if (Wow64DisableWow64FsRedirection != NULL)
+   {
+	Wow64DisableWow64FsRedirection(&oldValue);
+   }
+	
    while (FindNextFile(lpFind->hFindFile, &lpFind->fd)) {
 
-      lpFind->fd.dwFileAttributes &= ATTR_USED;
+	  lpFind->fd.dwFileAttributes &= ATTR_USED;
    
       //
       // only pick files that fit attr filter
@@ -154,7 +165,10 @@ WFFindNext(LPLFNDTA lpFind)
           }
       }
 
-      Wow64RevertWow64FsRedirection(oldValue);
+      if (Wow64RevertWow64FsRedirection != NULL)
+      {
+	  Wow64RevertWow64FsRedirection(oldValue);
+      }
 
       lpFind->err = 0;
       return TRUE;
@@ -162,7 +176,10 @@ WFFindNext(LPLFNDTA lpFind)
 
    lpFind->err = GetLastError();
 
+   if (Wow64RevertWow64FsRedirection != NULL)
+   {
    Wow64RevertWow64FsRedirection(oldValue);
+   }
    return(FALSE);
 }
 
@@ -636,13 +653,13 @@ BOOL IsVeryLongPath(LPCWSTR pszPathName)
  */
 DWORD WFJunction(LPCWSTR pszLinkDirectory, LPCWSTR pszLinkTarget)
 {
-   DWORD        dwRet = ERROR_SUCCESS;
+   DWORD		dwRet = ERROR_SUCCESS;
    // Size assumption: We have to copy 2 path with each MAXPATHLEN long onto the structure. So we take 3 times MAXPATHLEN
-   char         reparseBuffer[MAXPATHLEN * 3];
-   WCHAR        szDirectoryName[MAXPATHLEN];
-   WCHAR        szTargetName[MAXPATHLEN];
-   PWCHAR       szFilePart;
-   DWORD        dwLength;
+   char		reparseBuffer[MAXPATHLEN * 3];
+   WCHAR		szDirectoryName[MAXPATHLEN];
+   WCHAR		szTargetName[MAXPATHLEN];
+   PWCHAR	szFilePart;
+   DWORD		dwLength;
 
 
    // Get the full path referenced by the target

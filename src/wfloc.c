@@ -10,6 +10,10 @@ Licensed under the MIT License.
 ********************************************************************/
 #include "winfile.h"
 
+#ifndef LOCALE_SLOCALIZEDDISPLAYNAME
+#define LOCALE_SLOCALIZEDDISPLAYNAME 0x2
+#endif
+
 /*
 The Language names are sorted like this because CBS_SORT Flag for comboboxes causes bugs.
 cf. https://msdn.microsoft.com/en-us/library/cc233982.aspx
@@ -28,6 +32,12 @@ LPCTSTR szLCIDs[] = {
 VOID InitLangList(HWND hCBox)
 {
     UINT i;
+
+    // Pre-Vista, there's no real locale support
+    if (GetLocaleInfoEx == NULL)
+    {
+        return;
+    }
 
     // Propogate the list
     for (i = 0; i <= (COUNTOF(szLCIDs) - 1); i++)

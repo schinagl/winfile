@@ -821,34 +821,38 @@ GetPowershellExePath(LPTSTR szPSPath)
             DWORD dwInstall;
             DWORD dwType;
             DWORD cbValue = sizeof(dwInstall);
-            dwError = RegGetValue(hkey, szSub, TEXT("Install"), RRF_RT_DWORD, &dwType, (PVOID)&dwInstall, &cbValue);
+            HKEY hkeySub;
+            dwError = RegOpenKey(hkey, szSub, &hkeySub);
 
-            if (dwError == ERROR_SUCCESS && dwInstall == 1)
+            if (dwError == ERROR_SUCCESS)
             {
-                // this install of powershell is active; get path
-
-                HKEY hkeySub;
-                dwError = RegOpenKey(hkey, szSub, &hkeySub);
-
-                if (dwError == ERROR_SUCCESS)
+                dwError = RegQueryValueEx(hkeySub, TEXT("Install"), NULL, &dwType, (PVOID)&dwInstall, &cbValue);
+                if (dwError == ERROR_SUCCESS && dwInstall == 1)
                 {
-                    LPTSTR szPSExe = TEXT("\\Powershell.exe");
+                    HKEY hkeySubSub;
 
-                    cbValue = (MAXPATHLEN - lstrlen(szPSExe)) * sizeof(TCHAR);
-                    dwError = RegGetValue(hkeySub, TEXT("PowerShellEngine"), TEXT("ApplicationBase"), RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ, &dwType, (PVOID)szPSPath, &cbValue);
-
+                    dwError = RegOpenKey(hkeySub, TEXT("PowerShellEngine"), &hkeySubSub);
                     if (dwError == ERROR_SUCCESS)
                     {
-                        lstrcat(szPSPath, szPSExe);
-                    }
-                    else
-                    {
-                        // reset to empty string if not successful
-                        szPSPath[0] = TEXT('\0');
+                        LPTSTR szPSExe = TEXT("\\Powershell.exe");
+
+                        cbValue = (MAXPATHLEN - lstrlen(szPSExe)) * sizeof(TCHAR);
+                        dwError = RegQueryValueEx(hkeySubSub, TEXT("ApplicationBase"), NULL, &dwType, (PVOID)szPSPath, &cbValue);
+
+                        if (dwError == ERROR_SUCCESS)
+                        {
+                            lstrcat(szPSPath, szPSExe);
+                        }
+                        else
+                        {
+                            // reset to empty string if not successful
+                            szPSPath[0] = TEXT('\0');
+                        }
+                        RegCloseKey(hkeySubSub);
                     }
 
-                    RegCloseKey(hkeySub);
                 }
+                RegCloseKey(hkeySub);
             }
         }
     }

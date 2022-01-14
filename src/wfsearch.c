@@ -513,7 +513,7 @@ FillSearchLB(HWND hwndLB, LPWSTR szSearchFileSpec, BOOL bRecurse, BOOL bIncludeS
 	  }
 
       // copy the wild card to a temporary buffer sine FixUpFileSpec modifies the buffer
-      wcsncpy_s(szWildCard, COUNTOF(szWildCard), lpszCurrentFileSpecStart, _TRUNCATE);
+      wcsncpy(szWildCard, lpszCurrentFileSpecStart, COUNTOF(szWildCard)-1);
 
 	  FixUpFileSpec(szWildCard);
 

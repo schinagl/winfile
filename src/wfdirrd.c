@@ -52,6 +52,59 @@ BOOL IsNetDir(LPWSTR pPath, LPWSTR pName);
 VOID DirReadAbort(HWND hwnd, LPXDTALINK lpStart, EDIRABORT eDirAbort);
 LONG WFRegGetValueW(HKEY hkey, LPCWSTR lpSubKey, LPCWSTR lpValue, LPDWORD pdwType, PVOID pvData, LPDWORD pcbData);
 
+typedef struct _REPARSE_DATA_BUFFER {
+  ULONG  ReparseTag;
+  USHORT  ReparseDataLength;
+  USHORT  Reserved;
+  union {
+    struct {
+      USHORT  SubstituteNameOffset;
+      USHORT  SubstituteNameLength;
+      USHORT  PrintNameOffset;
+      USHORT  PrintNameLength;
+      ULONG   Flags; // it seems that the docu is missing this entry (at least 2008-03-07)
+      WCHAR  PathBuffer[1];
+      } SymbolicLinkReparseBuffer;
+    struct {
+      USHORT  SubstituteNameOffset;
+      USHORT  SubstituteNameLength;
+      USHORT  PrintNameOffset;
+      USHORT  PrintNameLength;
+      WCHAR  PathBuffer[1];
+      } MountPointReparseBuffer;
+    struct {
+      UCHAR  DataBuffer[1];
+    } GenericReparseBuffer;
+  };
+} REPARSE_DATA_BUFFER, *PREPARSE_DATA_BUFFER;
+
+#ifndef REPARSE_DATA_BUFFER_HEADER_SIZE
+#define REPARSE_DATA_BUFFER_HEADER_SIZE FIELD_OFFSET(REPARSE_DATA_BUFFER, GenericReparseBuffer)
+#endif
+ 
+#ifndef FSCTL_GET_REPARSE_POINT
+#define FSCTL_GET_REPARSE_POINT         CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 42, METHOD_BUFFERED, FILE_ANY_ACCESS) // REPARSE_DATA_BUFFER
+#endif
+
+#ifndef FILE_FLAG_OPEN_REPARSE_POINT
+#define FILE_FLAG_OPEN_REPARSE_POINT    0x00200000
+#endif
+
+#ifndef IsReparseTagMicrosoft
+#define IsReparseTagMicrosoft(_tag) (              \
+                           ((_tag) & 0x80000000)   \
+                           )
+#endif
+
+#ifndef IO_REPARSE_TAG_MOUNT_POINT
+#define IO_REPARSE_TAG_MOUNT_POINT              (0xA0000003L)
+#endif
+
+#ifndef IO_REPARSE_TAG_SYMLINK
+#define IO_REPARSE_TAG_SYMLINK                  (0xA000000CL)
+#endif
+
+
 BOOL
 InitDirRead(VOID)
 {
@@ -767,18 +820,18 @@ InvalidDirectory:
                   // For dead Reparse Points just tell that the directory could not be read
                   break;
                } else {
-               //
-               // If we changed dirs, and there is a tree window, set the
-               // dir to the root and collapse it
-               // Note that lpTemp-szPath>2, szPath[3] is not in the file spec
-               //
-               szPath[3] = CHAR_NULL;
-               SendMessage(hwndTree, TC_SETDIRECTORY, 0, (LPARAM)szPath);
-               SendMessage(hwndTree, TC_COLLAPSELEVEL, 0, 0L);
+                  //
+                  // If we changed dirs, and there is a tree window, set the
+                  // dir to the root and collapse it
+                  // Note that lpTemp-szPath>2, szPath[3] is not in the file spec
+                  //
+                  szPath[3] = CHAR_NULL;
+                  SendMessage(hwndTree, TC_SETDIRECTORY, 0, (LPARAM)szPath);
+                  SendMessage(hwndTree, TC_COLLAPSELEVEL, 0, 0L);
 Fail:
-               MemDelete(lpStart);
-               return NULL;
-            }
+                  MemDelete(lpStart);
+                  return NULL;
+               }
             }
 
             lstrcpy(szPath+3, lpTemp+1);
@@ -936,7 +989,7 @@ Fail:
             if (lfndta.fd.dwFileAttributes & (ATTR_SYMBOLIC | ATTR_JUNCTION))
                iBitmap = BM_IND_CLOSEREPARSE;
             else
-            iBitmap = BM_IND_CLOSE;
+               iBitmap = BM_IND_CLOSE;
          }
       } else if (lfndta.fd.dwFileAttributes & (ATTR_HIDDEN | ATTR_SYSTEM)) {
          iBitmap = BM_IND_RO;
@@ -948,7 +1001,7 @@ Fail:
          if (lfndta.fd.dwFileAttributes & (ATTR_SYMBOLIC | ATTR_JUNCTION))
             iBitmap = BM_IND_FILREPARSE;
          else
-         iBitmap = BM_IND_FIL;
+            iBitmap = BM_IND_FIL;
       }
 
       lpxdta = MemAdd(&lpLinkLast,

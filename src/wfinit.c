@@ -981,6 +981,7 @@ InitFileManager(
    HANDLE        hThread;
    DWORD         dwRetval;
    DWORD         dwExStyle = 0L;
+   HANDLE        hKernel32;
 
    hThread = GetCurrentThread();
 
@@ -1011,7 +1012,18 @@ InitFileManager(
       }
    }
 
+   hKernel32 = GetModuleHandle(KERNEL32_DLL);
+   lpfnGetCompressedFileSizeW = (PVOID)GetProcAddress(hKernel32, KERNEL32_GetCompressedFileSizeW);
+   lpfnGetLocaleInfoEx = (PVOID)GetProcAddress(hKernel32, KERNEL32_GetLocaleInfoEx);
+   lpfnLocaleNameToLCID = (PVOID)GetProcAddress(hKernel32, KERNEL32_LocaleNameToLCID);
+   lpfnSetThreadUILanguage = (PVOID)GetProcAddress(hKernel32, KERNEL32_SetThreadUILanguage);
+   lpfnWow64DisableWow64FsRedirection = (PVOID)GetProcAddress(hKernel32, KERNEL32_Wow64DisableWow64FsRedirection);
+   lpfnWow64RevertWow64FsRedirection = (PVOID)GetProcAddress(hKernel32, KERNEL32_Wow64RevertWow64FsRedirection);
+
    // e.g., UILanguage=zh-CN; UI language defaults to OS set language or English if that language is not supported.
+   if (lpfnLocaleNameToLCID != NULL &&
+       lpfnSetThreadUILanguage != NULL)
+   {
    GetPrivateProfileString(szSettings, szUILanguage, szNULL, szTemp, COUNTOF(szTemp), szTheINIFile);
    if (szTemp[0])
    {
@@ -1023,6 +1035,7 @@ InitFileManager(
            // update to current local used for dispaly
            SetThreadLocale(lcidUI);
        }
+   }
    }
 
    lcid = GetThreadLocale();

@@ -1,0 +1,9 @@
+#include "rescmn.rc"
+#pragma code_page(65001) //UTF-8
+#include "lang\res_en-US.rc"
+#include "lang\res_zh-CN.rc"
+#include "lang\res_ja-JP.rc"
+#include "lang\res_pl-PL.rc"
+#include "lang\res_he-IL.rc"
+#include "lang\res_de-DE.rc"
+#include "lang\res_tr-TR.rc"

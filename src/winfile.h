@@ -14,6 +14,13 @@
 #define WIN31
 #define NTFS
 
+//
+//  Disable deprecation warnings - this code is unashamedly old
+//
+
+#pragma warning(disable: 4995)
+#define _CRT_SECURE_NO_WARNINGS 1
+
 #include <windows.h>
 #include <windowsX.h>
 #include <setjmp.h>
@@ -961,6 +968,37 @@ typedef struct _DRIVE_INFO {
 #define EQ(x)
 #endif
 
+//----------------------------
+//
+//  Lazy load kernel32 support
+//
+//----------------------------
+
+#define KERNEL32_DLL TEXT("kernel32.dll")
+DWORD (CALLBACK *lpfnGetCompressedFileSizeW)(LPCWSTR, LPDWORD);
+LCID (CALLBACK *lpfnGetLocaleInfoEx)(LPCWSTR, LCTYPE, LPWSTR, int);
+LCID (CALLBACK *lpfnLocaleNameToLCID)(LPCWSTR, DWORD);
+LANGID (CALLBACK *lpfnSetThreadUILanguage)(LANGID);
+BOOL (CALLBACK *lpfnWow64DisableWow64FsRedirection)(PVOID *);
+BOOL (CALLBACK *lpfnWow64RevertWow64FsRedirection)(PVOID);
+
+#define KERNEL32_GetLocaleInfoEx                "GetLocaleInfoEx"
+#define KERNEL32_GetCompressedFileSizeW         "GetCompressedFileSizeW"
+#define KERNEL32_LocaleNameToLCID               "LocaleNameToLCID"
+#define KERNEL32_SetThreadUILanguage            "SetThreadUILanguage"
+#define KERNEL32_Wow64DisableWow64FsRedirection "Wow64DisableWow64FsRedirection"
+#define KERNEL32_Wow64RevertWow64FsRedirection  "Wow64RevertWow64FsRedirection"
+
+#define GetCompressedFileSizeW           (*lpfnGetCompressedFileSizeW)
+#define GetLocaleInfoEx                  (*lpfnGetLocaleInfoEx)
+#define LocaleNameToLCID                 (*lpfnLocaleNameToLCID)
+#define SetThreadUILanguage              (*lpfnSetThreadUILanguage)
+#define Wow64DisableWow64FsRedirection   (*lpfnWow64DisableWow64FsRedirection)
+#define Wow64RevertWow64FsRedirection    (*lpfnWow64RevertWow64FsRedirection)
+
+#ifndef GetCompressedFileSize
+#define GetCompressedFileSize GetCompressedFileSizeW
+#endif
 
 
 //----------------------------
