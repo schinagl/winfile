@@ -267,14 +267,15 @@ vector<wstring> SplitIntoWords(LPCTSTR szText)
 {
 	vector<wstring> words;
 
-	wstringstream ss;
-	ss.str(szText);
-	wstring item;
-	while (getline(ss, item, L' '))
-	{
-		if (item.size() != 0)
-			words.push_back(item);
-	}
+   wchar_t tempStr[MAX_PATH];
+   wcscpy_s(tempStr, szText);
+   wchar_t const* const delimiter{ L" -_." };
+   wchar_t* token{ wcstok(tempStr, delimiter) };
+   while (nullptr != token)
+   {
+      words.push_back(token);
+      token = wcstok(nullptr, delimiter);
+   }
 
 	return words;
 }
