@@ -552,6 +552,48 @@ WFCopy(LPTSTR pszFrom, LPTSTR pszTo)
     return dwRet;
 }
 
+/* WFHardlink
+ *
+ *  Creates a Hardlink
+ */
+DWORD
+WFHardLink(LPTSTR pszFrom, LPTSTR pszTo)
+{
+   DWORD dwRet;
+
+   Notify(hdlgProgress, IDS_COPYINGMSG, pszFrom, pszTo);
+
+   if (CreateHardLink(pszTo, pszFrom, NULL)) {
+      ChangeFileSystem(FSC_CREATE, pszTo, NULL);
+      dwRet = ERROR_SUCCESS;
+   } else {
+      dwRet = GetLastError();
+   }
+
+   return dwRet;
+}
+
+/* WFSymbolicLink
+ *
+ *  Creates a Symbolic Link
+ */
+DWORD
+WFSymbolicLink(LPTSTR pszFrom, LPTSTR pszTo, DWORD dwFlags)
+{
+   DWORD dwRet;
+
+   Notify(hdlgProgress, IDS_COPYINGMSG, pszFrom, pszTo);
+
+   if (CreateSymbolicLink(pszTo, pszFrom, dwFlags | SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE)) {
+      ChangeFileSystem(FSC_CREATE, pszTo, NULL);
+      dwRet = ERROR_SUCCESS;
+   } else {
+      dwRet = GetLastError();
+   }
+
+   return dwRet;
+}
+
 /* WFRemove
  *
  *  Deletes files
