@@ -18,6 +18,14 @@
 
 BOOL IsFATName(LPTSTR pName);
 
+#ifndef IO_REPARSE_TAG_MOUNT_POINT
+#define IO_REPARSE_TAG_MOUNT_POINT              (0xA0000003L)
+#endif
+
+#ifndef IO_REPARSE_TAG_SYMLINK
+#define IO_REPARSE_TAG_SYMLINK                  (0xA000000CL)
+#endif
+
 /* WFFindFirst -
  *
  * returns:

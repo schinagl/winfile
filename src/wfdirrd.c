@@ -812,9 +812,11 @@ InvalidDirectory:
 
             if (hwndTree=HasTreeWindow(hwnd)) {
 
+               DWORD attr;
+
                // Check if it is a Reparse Point
                lpTemp[0] = '\0';
-               DWORD attr = GetFileAttributes(szPath);
+               attr = GetFileAttributes(szPath);
                lpTemp[0] = CHAR_BACKSLASH;
                if (attr & ATTR_REPARSE_POINT) {
                   // For dead Reparse Points just tell that the directory could not be read
