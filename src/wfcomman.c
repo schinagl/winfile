@@ -902,10 +902,12 @@ AppCommandProc(DWORD id)
    TCHAR         szPath[MAXPATHLEN];
    INT           ret;
 
+   DWORD dwDrop1;
+   DWORD dwDrop2;
+
    hwndActive = (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, 0L);
 
    dwContext = IDH_HELPFIRST + id;
-
    switch (id) {
 
    case IDM_PERMISSIONS:
@@ -1167,78 +1169,96 @@ AppCommandProc(DWORD id)
       DialogBox(hAppInstance, (LPTSTR) MAKEINTRESOURCE(MOVECOPYDLG), hwndFrame, SuperDlgProc);
       break;
 
+   case IDM_LINK:
+      dwDrop1 = DROP_LINK;
+      dwDrop2 = DROP_HARD;
+
+      goto DropIt;
+
    case IDM_PASTE:
-      {
+   {
+      DWORD dwEffect;
       IDataObject *pDataObj;
-	  FORMATETC fmtetcDrop = { 0, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-	  UINT uFormatEffect = RegisterClipboardFormat(CFSTR_PREFERREDDROPEFFECT);
-	  FORMATETC fmtetcEffect = { uFormatEffect, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-	  STGMEDIUM stgmed;
-	  DWORD dwEffect = DROPEFFECT_COPY;
-	  LPWSTR szFiles = NULL;
+      LPWSTR szFiles;
 
-	  OleGetClipboard(&pDataObj);		// pDataObj == NULL if error
+      dwDrop1 = DROP_COPY;
+      dwDrop2 = DROP_MOVE;
 
-	  if(pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcEffect, &stgmed) == S_OK)
-	  {
-	  	LPDWORD lpEffect = GlobalLock(stgmed.hGlobal);
-	  	if(*lpEffect & DROPEFFECT_COPY) dwEffect = DROPEFFECT_COPY;
-		if(*lpEffect & DROPEFFECT_MOVE) dwEffect = DROPEFFECT_MOVE;
-		GlobalUnlock(stgmed.hGlobal);
-	  	ReleaseStgMedium(&stgmed);
-	  }
-      
-	  // Try CF_HDROP
-	  if(pDataObj != NULL)
-		szFiles = QuotedDropList(pDataObj);
+   DropIt:
+      dwEffect = dwDrop1;
 
-	  // Try CFSTR_FILEDESCRIPTOR
-	  if (szFiles == NULL)
-	  {
-			szFiles = QuotedContentList(pDataObj);
-			if (szFiles != NULL)
-				// need to move the already copied files
-				dwEffect = DROPEFFECT_MOVE;
-	  }
+      {
+         FORMATETC fmtetcDrop = { 0, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+         UINT uFormatEffect = RegisterClipboardFormat(CFSTR_PREFERREDDROPEFFECT);
+         FORMATETC fmtetcEffect = { uFormatEffect, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+         STGMEDIUM stgmed;
+         szFiles = NULL;
 
-	  // Try "LongFileNameW"
-	  fmtetcDrop.cfFormat = RegisterClipboardFormat(TEXT("LongFileNameW"));
-	  if(szFiles == NULL && pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcDrop, &stgmed) == S_OK)
-	  {
-	  	LPWSTR lpFile = GlobalLock(stgmed.hGlobal);
-	  	SIZE_T cchFile = wcslen(lpFile);
-		szFiles = (LPWSTR)LocalAlloc(LMEM_FIXED, (cchFile+3) * sizeof(WCHAR));
-		lstrcpy (szFiles+1, lpFile);
-		*szFiles = '\"';
-		*(szFiles+1+cchFile) = '\"';
-		*(szFiles+1+cchFile+1) = '\0';		
+         OleGetClipboard(&pDataObj);		// pDataObj == NULL if error
 
-		GlobalUnlock(stgmed.hGlobal);
-		
-		// release the data using the COM API
-		ReleaseStgMedium(&stgmed);
-	  }
+         if (pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcEffect, &stgmed) == S_OK)
+         {
+            LPDWORD lpEffect = GlobalLock(stgmed.hGlobal);
+            if (*lpEffect & DROPEFFECT_COPY) 
+               dwEffect = dwDrop1;
+            if (*lpEffect & DROPEFFECT_MOVE) 
+               dwEffect = dwDrop2;
+            GlobalUnlock(stgmed.hGlobal);
+            ReleaseStgMedium(&stgmed);
+         }
 
-	  if (szFiles != NULL)
-	  {
-		WCHAR     szTemp[MAXPATHLEN];
+         // Try CF_HDROP
+         if (pDataObj != NULL)
+            szFiles = QuotedDropList(pDataObj);
 
-		SendMessage(hwndActive, FS_GETDIRECTORY, COUNTOF(szTemp), (LPARAM)szTemp);
+         // Try CFSTR_FILEDESCRIPTOR
+         if (szFiles == NULL)
+         {
+            szFiles = QuotedContentList(pDataObj);
+            if (szFiles != NULL)
+               // need to move the already copied files
+               dwEffect = dwDrop2;
+         }
 
-	    AddBackslash(szTemp);
-	    lstrcat(szTemp, szStarDotStar);   // put files in this dir
+         // Try "LongFileNameW"
+         fmtetcDrop.cfFormat = RegisterClipboardFormat(TEXT("LongFileNameW"));
+         if (szFiles == NULL && pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcDrop, &stgmed) == S_OK)
+         {
+            LPWSTR lpFile = GlobalLock(stgmed.hGlobal);
+            SIZE_T cchFile = wcslen(lpFile);
+            szFiles = (LPWSTR)LocalAlloc(LMEM_FIXED, (cchFile + 3) * sizeof(WCHAR));
+            lstrcpy(szFiles + 1, lpFile);
+            *szFiles = '\"';
+            *(szFiles + 1 + cchFile) = '\"';
+            *(szFiles + 1 + cchFile + 1) = '\0';
 
-	    CheckEsc(szTemp);
+            GlobalUnlock(stgmed.hGlobal);
 
-		DMMoveCopyHelper(szFiles, szTemp, dwEffect == DROPEFFECT_COPY);
+            // release the data using the COM API
+            ReleaseStgMedium(&stgmed);
+         }
+      }
 
-		LocalFree((HLOCAL)szFiles);	
-	  }
+      if (szFiles != NULL)
+      {
+         WCHAR     szTemp[MAXPATHLEN];
 
-	  if (pDataObj != NULL)
-	    pDataObj->lpVtbl->Release(pDataObj);
-   	  }
-   	  break;
+         SendMessage(hwndActive, FS_GETDIRECTORY, COUNTOF(szTemp), (LPARAM)szTemp);
+
+         AddBackslash(szTemp);
+         lstrcat(szTemp, szStarDotStar);   // put files in this dir
+
+         CheckEsc(szTemp);
+
+         DMMoveCopyHelper(szFiles, szTemp, dwEffect);
+
+         LocalFree((HLOCAL)szFiles);
+      }
+
+      if (pDataObj != NULL)
+         pDataObj->lpVtbl->Release(pDataObj);
+   }
+   break;
    	  
    case IDM_PRINT:
       dwSuperDlgMode = id;

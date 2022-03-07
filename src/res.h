@@ -94,6 +94,7 @@
 #define IDM_STARTPOWERSHELL 128
 #define IDM_STARTBASHSHELL  129
 #define IDM_CLOSEWINDOW     130
+#define IDM_LINK            131
 #define IDM_SYMLINK         132
 #define IDM_HARDLINK        133
 

@@ -77,6 +77,7 @@ BEGIN
 	"^p",       IDM_STARTPOWERSHELL, NOINVERT
 	"^f",       IDM_SEARCH, NOINVERT
 	"^w",       IDM_CLOSEWINDOW, NOINVERT
+	"^l",       IDM_LINK, NOINVERT
 END
 
 // Define version information
