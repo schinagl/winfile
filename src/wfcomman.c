@@ -892,6 +892,8 @@ AppCommandProc(register DWORD id)
    hwndActive = (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, 0L);
 
    dwContext = IDH_HELPFIRST + id;
+   DWORD dwDrop1;
+   DWORD dwDrop2;
 
    switch (id) {
 
@@ -1141,14 +1143,25 @@ AppCommandProc(register DWORD id)
       DialogBox(hAppInstance, (LPTSTR) MAKEINTRESOURCE(MOVECOPYDLG), hwndFrame, SuperDlgProc);
       break;
 
+   case IDM_LINK:
+      dwDrop1 = DROP_LINK;
+      dwDrop2 = DROP_HARD;
+
+      goto DropIt;
+
    case IDM_PASTE:
       {
+      dwDrop1 = DROP_COPY;
+      dwDrop2 = DROP_MOVE;
+
+DropIt:
+      DWORD dwEffect = dwDrop1;
+
       IDataObject *pDataObj;
 	  FORMATETC fmtetcDrop = { 0, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	  UINT uFormatEffect = RegisterClipboardFormat(CFSTR_PREFERREDDROPEFFECT);
 	  FORMATETC fmtetcEffect = { uFormatEffect, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	  STGMEDIUM stgmed;
-	  DWORD dwEffect = DROPEFFECT_COPY;
 	  LPWSTR szFiles = NULL;
 
 	  OleGetClipboard(&pDataObj);		// pDataObj == NULL if error
@@ -1156,8 +1169,8 @@ AppCommandProc(register DWORD id)
 	  if(pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcEffect, &stgmed) == S_OK)
 	  {
 	  	LPDWORD lpEffect = GlobalLock(stgmed.hGlobal);
-	  	if(*lpEffect & DROPEFFECT_COPY) dwEffect = DROPEFFECT_COPY;
-		if(*lpEffect & DROPEFFECT_MOVE) dwEffect = DROPEFFECT_MOVE;
+	  	if(*lpEffect & DROPEFFECT_COPY) dwEffect = dwDrop1;
+		if(*lpEffect & DROPEFFECT_MOVE) dwEffect = dwDrop2;
 		GlobalUnlock(stgmed.hGlobal);
 	  	ReleaseStgMedium(&stgmed);
 	  }
@@ -1172,7 +1185,7 @@ AppCommandProc(register DWORD id)
 			szFiles = QuotedContentList(pDataObj);
 			if (szFiles != NULL)
 				// need to move the already copied files
-				dwEffect = DROPEFFECT_MOVE;
+				dwEffect = dwDrop2;
 	  }
 
 	  // Try "LongFileNameW"
@@ -1204,7 +1217,7 @@ AppCommandProc(register DWORD id)
 
 	    CheckEsc(szTemp);
 
-		DMMoveCopyHelper(szFiles, szTemp, dwEffect == DROPEFFECT_COPY);
+		DMMoveCopyHelper(szFiles, szTemp, dwEffect);
 
 		LocalFree((HLOCAL)szFiles);	
 	  }

@@ -97,7 +97,7 @@
 #define IDM_STARTPOWERSHELL 128
 #define IDM_STARTBASHSHELL  129
 #define IDM_CLOSEWINDOW     130
-
+#define IDM_LINK            131
 // This IDM_ is reserved for IDH_GROUP_ATTRIBS
 #define IDM_GROUP_ATTRIBS   199
 
