@@ -1803,26 +1803,45 @@ MergeNames:
 
    if (dwOp == OPER_MKDIR) {
 
-      //
-      // Make sure the new directory is not a subdir of the original...
-      // Assumes case insensitivity.
-      //
-      pT = pToPath;
+      if (!_wcsicmp(pFrom, pToPath)) {
+         switch (dwFunc) {
+         case FUNC_COPY:
+            lstrcat(pToPath, L" - Copy");
+            lstrcat(pcr->szDest, L" - Copy");
+            break;
 
-      while (*pFrom &&
-         CharUpper((LPTSTR)(TUCHAR)*pFrom) == CharUpper((LPTSTR)(TUCHAR)*pT)) {
+         case FUNC_LINK:
+            lstrcat(pToPath, L" - Symlink");
+            lstrcat(pcr->szDest, L" - Symlink");
+            break;
 
-         pFrom++;
-         pT++;
-      }
-      if (!*pFrom && (!*pT || *pT == CHAR_BACKSLASH)) {
+         case FUNC_HARD:
+            lstrcat(pToPath, L" - Junction");
+            lstrcat(pcr->szDest, L" - Junction");
+            break;
+         }
+      } else {
+         //
+         // Make sure the new directory is not a subdir of the original...
+         // Assumes case insensitivity.
+         //
+         pT = pToPath;
 
-         // The two fully qualified strings are equal up to the end of the
-         //   source directory ==> the destination is a subdir.Must return
-         //   an error.
+         while (*pFrom &&
+            CharUpper((LPTSTR)(TUCHAR)*pFrom) == CharUpper((LPTSTR)(TUCHAR)*pT)) {
 
-         dwOp = OPER_ERROR;
-         *pdwError = DE_DESTSUBTREE;
+            pFrom++;
+            pT++;
+         }
+         if (!*pFrom && (!*pT || *pT == CHAR_BACKSLASH)) {
+
+            // The two fully qualified strings are equal up to the end of the
+            //   source directory ==> the destination is a subdir.Must return
+            //   an error.
+
+            dwOp = OPER_ERROR;
+            *pdwError = DE_DESTSUBTREE;
+         }
       }
    }
 
@@ -2423,10 +2442,49 @@ TRY_COPY_AGAIN:
          bDoMoveRename = OPER_DOFILE == oper &&
             (FUNC_RENAME == pCopyInfo->dwFunc || FUNC_MOVE == pCopyInfo->dwFunc);
 
-         if (bSameFile && !bDoMoveRename) {
+         if (bSameFile && !bDoMoveRename && (oper != OPER_RMDIR)) {
 
-            ret = DE_SAMEFILE;
-            goto ShowMessageBox;
+            // Source and destination are exactly the same
+            WCHAR szDestAlt[MAX_PATH + 2] = { 0 };
+            lstrcpy(szDestAlt, szDest);
+
+            // Lets try to apply the 'Copy' pattern, e.g. 'file.ext' -> 'file - Copy.ext'
+            WCHAR szExtension[MAX_PATH + 2] = { 0 };
+            LPTSTR pExt = PathFindExtension(szDestAlt);
+            if (*pExt) {
+               // Split of extension if available
+               lstrcpy(szExtension, pExt);
+               *pExt = '\0';
+            }
+
+            // Postfix the operation
+            switch (pCopyInfo->dwFunc) {
+            case FUNC_COPY:
+               lstrcat(szDestAlt, L" - Copy");
+               break;
+            
+            case FUNC_LINK:
+               lstrcat(szDestAlt, L" - Symlink");
+               break;
+
+            case FUNC_HARD:
+               lstrcat(szDestAlt, L" - Hardlink");
+               break;
+            
+            default:
+               break;
+            }
+
+            lstrcat(szDestAlt, szExtension);
+            
+            // We only do a one level '- Copy' postfixing, and do intentionally not go for a '- Copy (n)' postfix
+            if (INVALID_FILE_ATTRIBUTES == GetFileAttributes(szDestAlt)) {
+               lstrcpy(szDest, szDestAlt);
+            } else {
+               // If one already used this '- Copy' postfix, bail out. Just one level.
+               ret = DE_SAMEFILE;
+               goto ShowMessageBox;
+            }
 
          } else if (ret = IsInvalidPath (szDest)) {
 

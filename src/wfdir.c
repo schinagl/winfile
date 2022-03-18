@@ -776,7 +776,7 @@ DirWndProc(
       break;
 
    case WM_QUERYDROPOBJECT:
-
+   {
       // lParam LPDROPSTRUCT
       //
       // return values:
@@ -788,7 +788,7 @@ DirWndProc(
       //
       // Ensure that we are dropping on the client area of the listbox.
       //
-#define lpds ((LPDROPSTRUCT)lParam)
+      LPDROPSTRUCT lpds = (LPDROPSTRUCT)lParam;
 
       //
       // Ensure that we can accept the format.
@@ -804,7 +804,7 @@ DirWndProc(
           return TRUE;
       }
       return FALSE;
-#undef lpds
+   }
 
    case WM_SETFOCUS:
       {

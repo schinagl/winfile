@@ -485,11 +485,11 @@ TreeWndProc(
       case WM_DRAGSELECT:
       case WM_QUERYDROPOBJECT:
       case WM_DROPOBJECT:
-
+      {
          // This code is really messed up since there is only one drive bar.
          // Fix the case for Iconic windows but the uniconic state is weird
 
-#define lpds   ((LPDROPSTRUCT)lParam)
+         LPDROPSTRUCT lpds = (LPDROPSTRUCT)lParam;
 
          if (IsIconic(hwnd) || hwnd != (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, 0L)) {
             if (hwndDir = HasDirWindow(hwnd)) {
@@ -499,7 +499,6 @@ TreeWndProc(
                break;
             }
          }
-#undef lpds
 
          if (hwndDriveBar) {
 
@@ -516,7 +515,7 @@ TreeWndProc(
          }
 
          break;
-
+      }
       case FS_GETDRIVE:
 
           GetTreeWindows(hwnd, &hwndTree, &hwndDir);
