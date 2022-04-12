@@ -1334,6 +1334,13 @@ JAPANEND
 
       hwndPrev = NULL; // FindWindow (szFrameClass, NULL);
 
+      // Check if developer mode is available in Windows10
+      OSVERSIONINFO  osversion;
+      osversion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+      GetVersionEx(&osversion);
+      if (osversion.dwMajorVersion >= 10 && osversion.dwBuildNumber >= 14972)
+        bDeveloperModeAvailable = TRUE;
+
       if (hwndPrev != NULL) {
          //  For Win32, this will accomplish almost the same effect as the
          //  above code does for Win 3.0/3.1   [stevecat]

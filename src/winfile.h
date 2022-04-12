@@ -1370,6 +1370,8 @@ Extern TCHAR szFmifsDll[]    EQ( TEXT("fmifs.dll") );
 Extern   CANCEL_INFO CancelInfo;
 Extern   SEARCH_INFO SearchInfo;
 
+Extern BOOL  bDeveloperModeAvailable EQ(FALSE);
+
 // this value is an index into dwMenuIDs and used to workaround a bug
 #define MHPOP_CURRENT 2
 
