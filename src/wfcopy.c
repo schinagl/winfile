@@ -2333,11 +2333,18 @@ WFMoveCopyDriverThread(LPVOID lpParameter)
                goto CancelWholeOperation;
          }
 
+         // If FUNC_HARD comes in and it is a directory translate it to FUNC_JUNC
+         //
+         if (pCopyInfo->dwFunc == FUNC_HARD && IsDirectory(pCopyInfo->pFrom)) {
+            pCopyInfo->dwFunc = FUNC_JUNC;
+         }
+
          // deal with case where directory is implicit in source
          // move/copy: *.* -> c:\windows, c:\windows -> c:\temp
          // or foo.bar -> c:\temp
+         // do this not for jucntion or symlinks
 
-         if (!IsWild(pCopyInfo->pTo) && (ManySource || IsDirectory(pCopyInfo->pTo))) {
+         if (!IsWild(pCopyInfo->pTo) && (ManySource || IsDirectory(pCopyInfo->pTo)) && pCopyInfo->dwFunc != FUNC_LINK && pCopyInfo->dwFunc != FUNC_JUNC) {
             AddBackslash(pCopyInfo->pTo);
             lstrcat(pCopyInfo->pTo, szStarDotStar);
          }
