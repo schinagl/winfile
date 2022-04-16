@@ -105,12 +105,9 @@ selecting one changes to that directory.  Default = c:\. Confgigure via Winfile.
 14. added simple forward / back navigation (probably needs to be improved)
 15. View command has a new option to sort by date forward (oldest on top);
 normal date sorting is newest on top
-<<<<<<< HEAD
 16. CTRL + ENTER executes associated files as administrator
-=======
 17. Symbolic Link directories/files and can be created by pressing CTRL + SHIFT during drag and drop of directories/files
 18. Hardlinks and Junctions and can be created by pressing CTRL + SHIFT + ALT during drag and drop of directories/files
->>>>>>> 53282b9... Creation of Symbolic Links, Hardlink and Junctions via keyboard shortcuts
 
 You can read the code for more details.
 
