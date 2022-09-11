@@ -41,8 +41,7 @@ NotifySearchFSC(
    if (!hwndSearch)
       return;
 
-   if (DRIVEID(pszPath) ==
-      SendMessage(hwndSearch, FS_GETDRIVE, 0, 0L) - CHAR_A) {
+   if (DRIVEID(pszPath) == SendMessage(hwndSearch, FS_GETDRIVE, 0, 0L) - CHAR_A) {
 
       SendMessage(hwndSearch, WM_FSC, dwFunction, 0L);
    }
@@ -533,7 +532,7 @@ CreateDirWindow(
    //
    if (bReplaceOpen) {
 
-       INT i;
+	   INT i;
 	   DRIVE drive;
 
 	   CharUpperBuff(szPath, 1);     // make sure
@@ -827,35 +826,35 @@ GetPowershellExePath(LPTSTR szPSPath)
             if (dwError == ERROR_SUCCESS)
             {
                 dwError = RegQueryValueEx(hkeySub, TEXT("Install"), NULL, &dwType, (PVOID)&dwInstall, &cbValue);
-                if (dwError == ERROR_SUCCESS && dwInstall == 1)
-                {
+            if (dwError == ERROR_SUCCESS && dwInstall == 1)
+            {
                     HKEY hkeySubSub;
 
                     dwError = RegOpenKey(hkeySub, TEXT("PowerShellEngine"), &hkeySubSub);
-                    if (dwError == ERROR_SUCCESS)
-                    {
-                        LPTSTR szPSExe = TEXT("\\Powershell.exe");
+                if (dwError == ERROR_SUCCESS)
+                {
+                    LPTSTR szPSExe = TEXT("\\Powershell.exe");
 
-                        cbValue = (MAXPATHLEN - lstrlen(szPSExe)) * sizeof(TCHAR);
+                    cbValue = (MAXPATHLEN - lstrlen(szPSExe)) * sizeof(TCHAR);
                         dwError = RegQueryValueEx(hkeySubSub, TEXT("ApplicationBase"), NULL, &dwType, (PVOID)szPSPath, &cbValue);
 
-                        if (dwError == ERROR_SUCCESS)
-                        {
-                            lstrcat(szPSPath, szPSExe);
-                        }
-                        else
-                        {
-                            // reset to empty string if not successful
-                            szPSPath[0] = TEXT('\0');
-                        }
+                    if (dwError == ERROR_SUCCESS)
+                    {
+                        lstrcat(szPSPath, szPSExe);
+                    }
+                    else
+                    {
+                        // reset to empty string if not successful
+                        szPSPath[0] = TEXT('\0');
+                    }
                         RegCloseKey(hkeySubSub);
                     }
 
                 }
-                RegCloseKey(hkeySub);
+                    RegCloseKey(hkeySub);
+                }
             }
         }
-    }
 
     RegCloseKey(hkey);
 
@@ -1144,7 +1143,15 @@ AppCommandProc(DWORD id)
            HWND      hwndActive;
 
            hwndActive = (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, 0L);
+
+           if (!IsLastWindow()) {
+              TCHAR szPath[MAXPATHLEN];
+              SendMessage(hwndActive, FS_GETDIRECTORY, COUNTOF(szPath), (LPARAM)szPath);
+              RemoveUNCDrive(szPath);
+              RefreshWindow(hwndActive, TRUE, TRUE);
+
            PostMessage(hwndActive, WM_CLOSE, 0, 0L);
+       }
        }
        break;
 
@@ -1176,7 +1183,7 @@ AppCommandProc(DWORD id)
       goto DropIt;
 
    case IDM_PASTE:
-   {
+      {
       DWORD dwEffect;
       IDataObject *pDataObj;
       LPWSTR szFiles;
@@ -1188,77 +1195,77 @@ AppCommandProc(DWORD id)
       dwEffect = dwDrop1;
 
       {
-         FORMATETC fmtetcDrop = { 0, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-         UINT uFormatEffect = RegisterClipboardFormat(CFSTR_PREFERREDDROPEFFECT);
-         FORMATETC fmtetcEffect = { uFormatEffect, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-         STGMEDIUM stgmed;
+	  FORMATETC fmtetcDrop = { 0, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	  UINT uFormatEffect = RegisterClipboardFormat(CFSTR_PREFERREDDROPEFFECT);
+	  FORMATETC fmtetcEffect = { uFormatEffect, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	  STGMEDIUM stgmed;
          szFiles = NULL;
 
-         OleGetClipboard(&pDataObj);		// pDataObj == NULL if error
+	  OleGetClipboard(&pDataObj);		// pDataObj == NULL if error
 
-         if (pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcEffect, &stgmed) == S_OK)
-         {
-            LPDWORD lpEffect = GlobalLock(stgmed.hGlobal);
+	  if(pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcEffect, &stgmed) == S_OK)
+	  {
+	  	LPDWORD lpEffect = GlobalLock(stgmed.hGlobal);
             if (*lpEffect & DROPEFFECT_COPY) 
                dwEffect = dwDrop1;
             if (*lpEffect & DROPEFFECT_MOVE) 
                dwEffect = dwDrop2;
-            GlobalUnlock(stgmed.hGlobal);
-            ReleaseStgMedium(&stgmed);
-         }
+		GlobalUnlock(stgmed.hGlobal);
+	  	ReleaseStgMedium(&stgmed);
+	  }
+      
+	  // Try CF_HDROP
+	  if(pDataObj != NULL)
+		szFiles = QuotedDropList(pDataObj);
 
-         // Try CF_HDROP
-         if (pDataObj != NULL)
-            szFiles = QuotedDropList(pDataObj);
-
-         // Try CFSTR_FILEDESCRIPTOR
-         if (szFiles == NULL)
-         {
-            szFiles = QuotedContentList(pDataObj);
-            if (szFiles != NULL)
-               // need to move the already copied files
+	  // Try CFSTR_FILEDESCRIPTOR
+	  if (szFiles == NULL)
+	  {
+			szFiles = QuotedContentList(pDataObj);
+			if (szFiles != NULL)
+				// need to move the already copied files
                dwEffect = dwDrop2;
-         }
+	  }
 
-         // Try "LongFileNameW"
-         fmtetcDrop.cfFormat = RegisterClipboardFormat(TEXT("LongFileNameW"));
-         if (szFiles == NULL && pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcDrop, &stgmed) == S_OK)
-         {
-            LPWSTR lpFile = GlobalLock(stgmed.hGlobal);
-            SIZE_T cchFile = wcslen(lpFile);
-            szFiles = (LPWSTR)LocalAlloc(LMEM_FIXED, (cchFile + 3) * sizeof(WCHAR));
-            lstrcpy(szFiles + 1, lpFile);
-            *szFiles = '\"';
-            *(szFiles + 1 + cchFile) = '\"';
-            *(szFiles + 1 + cchFile + 1) = '\0';
+	  // Try "LongFileNameW"
+	  fmtetcDrop.cfFormat = RegisterClipboardFormat(TEXT("LongFileNameW"));
+	  if(szFiles == NULL && pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcDrop, &stgmed) == S_OK)
+	  {
+	  	LPWSTR lpFile = GlobalLock(stgmed.hGlobal);
+	  	SIZE_T cchFile = wcslen(lpFile);
+		szFiles = (LPWSTR)LocalAlloc(LMEM_FIXED, (cchFile+3) * sizeof(WCHAR));
+		lstrcpy (szFiles+1, lpFile);
+		*szFiles = '\"';
+		*(szFiles+1+cchFile) = '\"';
+		*(szFiles+1+cchFile+1) = '\0';		
 
-            GlobalUnlock(stgmed.hGlobal);
-
-            // release the data using the COM API
-            ReleaseStgMedium(&stgmed);
-         }
+		GlobalUnlock(stgmed.hGlobal);
+		
+		// release the data using the COM API
+		ReleaseStgMedium(&stgmed);
+	  }
       }
 
-      if (szFiles != NULL)
-      {
-         WCHAR     szTemp[MAXPATHLEN];
+	  if (szFiles != NULL)
+	  {
+		WCHAR     szTemp[MAXPATHLEN];
 
-         SendMessage(hwndActive, FS_GETDIRECTORY, COUNTOF(szTemp), (LPARAM)szTemp);
+		SendMessage(hwndActive, FS_GETDIRECTORY, COUNTOF(szTemp), (LPARAM)szTemp);
 
-         AddBackslash(szTemp);
-         lstrcat(szTemp, szStarDotStar);   // put files in this dir
+	    AddBackslash(szTemp);
+	    lstrcat(szTemp, szStarDotStar);   // put files in this dir
 
-         CheckEsc(szTemp);
+	    CheckEsc(szTemp);
 
          DMMoveCopyHelper(szFiles, szTemp, dwEffect);
 
-         LocalFree((HLOCAL)szFiles);
-      }
+		LocalFree((HLOCAL)szFiles);	
+	  }
 
-      if (pDataObj != NULL)
-         pDataObj->lpVtbl->Release(pDataObj);
-   }
-   break;
+	  if (pDataObj != NULL)
+	    pDataObj->lpVtbl->Release(pDataObj);
+   	  }
+   	  break;
    	  
    case IDM_PRINT:
       dwSuperDlgMode = id;
@@ -2079,9 +2086,7 @@ CHECK_OPTION:
     case IDM_REFRESH:
        {
           INT i;
-
-#define NUMDRIVES (sizeof(rgiDrive)/sizeof(rgiDrive[0]))
-          INT rgiSaveDrives[NUMDRIVES];
+          INT rgiSaveDrives[MAX_DRIVES];
 
           if (WAITNET_LOADED) {
 
@@ -2093,7 +2098,7 @@ CHECK_OPTION:
              AddNetMenuItems();
           }
 
-          for (i=0; i<NUMDRIVES; ++i)
+          for (i = 0; i < MAX_DRIVES; ++i)
              rgiSaveDrives[i] = rgiDrive[i];
 
           for (i = 0; i < iNumExtensions; i++) {
@@ -2106,7 +2111,7 @@ CHECK_OPTION:
           // (done by sending the WM_SIZE below) and invalidate them so that
           // they will reflect the current status
 
-          for (i=0; i<NUMDRIVES; ++i) {
+          for (i = 0; i < MAX_DRIVES; ++i) {
              if (rgiDrive[i] != rgiSaveDrives[i]) {
 
                 // RedoDriveWindows no longer calls
