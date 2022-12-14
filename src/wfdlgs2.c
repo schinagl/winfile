@@ -316,7 +316,7 @@ RunDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam)
                   }
 
                   bLoadIt = IsDlgButtonChecked(hDlg, IDD_LOAD);
-                  bRunAs = IsDlgButtonChecked(hDlg, IDD_RUNAS);
+				  bRunAs = IsDlgButtonChecked(hDlg, IDD_RUNAS);
 
                   // Stop SaveBits flickering by invalidating the SaveBitsStuff.
                   // You can't just hide the window because it messes up the
@@ -499,10 +499,10 @@ JAPANEND
             LoadString(hAppInstance, IDS_COPY, szTitle, COUNTOF(szTitle));
             SetWindowText(hDlg, szTitle);
 
-            LoadString(hAppInstance, IDS_KK_COPYFROMSTR, szStr, COUNTOF(szStr));
-            SetDlgItemText(hDlg, IDD_KK_TEXTFROM, szStr);
-            LoadString(hAppInstance, IDS_KK_COPYTOSTR, szStr, COUNTOF(szStr));
-            SetDlgItemText(hDlg, IDD_KK_TEXTTO, szStr);
+               LoadString(hAppInstance, IDS_KK_COPYFROMSTR, szStr, COUNTOF(szStr));
+               SetDlgItemText(hDlg, IDD_KK_TEXTFROM, szStr);
+               LoadString(hAppInstance, IDS_KK_COPYTOSTR, szStr, COUNTOF(szStr));
+               SetDlgItemText(hDlg, IDD_KK_TEXTTO, szStr);
 
             break;
          case IDM_HARDLINK:
@@ -512,23 +512,10 @@ JAPANEND
             LoadString(hAppInstance, IDS_HARDLINK, szTitle, COUNTOF(szTitle));
             SetWindowText(hDlg, szTitle);
 
-            LoadString(hAppInstance, IDS_KK_HARDLINKFROMSTR, szStr, COUNTOF(szStr));
-            SetDlgItemText(hDlg, IDD_KK_TEXTFROM, szStr);
-            LoadString(hAppInstance, IDS_KK_HARDLINKTOSTR, szStr, COUNTOF(szStr));
-            SetDlgItemText(hDlg, IDD_KK_TEXTTO, szStr);
-
-            break;
-         case IDM_SYMLINK:
-
-            p = GetSelection(0, NULL);
-
-            LoadString(hAppInstance, IDS_SYMLINK, szTitle, COUNTOF(szTitle));
-            SetWindowText(hDlg, szTitle);
-
-            LoadString(hAppInstance, IDS_KK_SYMLINKFROMSTR, szStr, COUNTOF(szStr));
-            SetDlgItemText(hDlg, IDD_KK_TEXTFROM, szStr);
-            LoadString(hAppInstance, IDS_KK_SYMLINKTOSTR, szStr, COUNTOF(szStr));
-            SetDlgItemText(hDlg, IDD_KK_TEXTTO, szStr);
+               LoadString(hAppInstance, IDS_KK_HARDLINKFROMSTR, szStr, COUNTOF(szStr));
+               SetDlgItemText(hDlg, IDD_KK_TEXTFROM, szStr);
+               LoadString(hAppInstance, IDS_KK_HARDLINKTOSTR, szStr, COUNTOF(szStr));
+               SetDlgItemText(hDlg, IDD_KK_TEXTTO, szStr);
 
             break;
          case IDM_RENAME:
@@ -536,10 +523,10 @@ JAPANEND
             LoadString(hAppInstance, IDS_RENAME, szTitle, COUNTOF(szTitle));
             SetWindowText(hDlg, szTitle);
 
-            LoadString(hAppInstance, IDS_KK_RENAMEFROMSTR, szStr, COUNTOF(szStr));
-            SetDlgItemText(hDlg, IDD_KK_TEXTFROM, szStr);
-            LoadString(hAppInstance, IDS_KK_RENAMETOSTR, szStr, COUNTOF(szStr));
-            SetDlgItemText(hDlg, IDD_KK_TEXTTO, szStr);
+               LoadString(hAppInstance, IDS_KK_RENAMEFROMSTR, szStr, COUNTOF(szStr));
+               SetDlgItemText(hDlg, IDD_KK_TEXTFROM, szStr);
+               LoadString(hAppInstance, IDS_KK_RENAMETOSTR, szStr, COUNTOF(szStr));
+               SetDlgItemText(hDlg, IDD_KK_TEXTTO, szStr);
 
             // when renaming the current directory we cd up a level
             // (not really) and apply the appropriate adjustments
@@ -574,22 +561,22 @@ JAPANEND
             TCHAR szDirs[MAXPATHLEN];
             LPTSTR rgszDirs[MAX_DRIVES];
             int drive, driveCur;
-            BOOL fFirst = TRUE;
+        	BOOL fFirst = TRUE;
             
             iCtrl = IDD_TO;
             if (dwSuperDlgMode == IDM_RENAME)
-                SetDlgItemText(hDlg, IDD_TO, p);
+	            SetDlgItemText(hDlg, IDD_TO, p);
 
-            driveCur = (int)GetWindowLongPtr(hwndActive, GWL_TYPE);
+			driveCur = (int)GetWindowLongPtr(hwndActive, GWL_TYPE);
 
             LoadString(hAppInstance, IDS_CURDIRSARE, szDirs, COUNTOF(szDirs));
 
-            GetAllDirectories(rgszDirs);
+   			GetAllDirectories(rgszDirs);
 
-            for (drive = 0; drive < MAX_DRIVES; drive++)
-            {
-                if (drive != driveCur && rgszDirs[drive] != NULL)
-                {
+        	for (drive = 0; drive < MAX_DRIVES; drive++)
+        	{
+				if (drive != driveCur && rgszDirs[drive] != NULL)
+				{
                     if (!fFirst)
                     {
                         WfWcsNCat_S(szDirs, MAXPATHLEN, TEXT(";"), 1);
@@ -600,11 +587,11 @@ JAPANEND
                     // but due to the limited width of the dialog, we can't see it all anyway.
                     WfWcsNCat_S(szDirs, MAXPATHLEN, rgszDirs[drive], (DWORD)-1);
 
-                    LocalFree(rgszDirs[drive]);
-                }
-            }
+	        		LocalFree(rgszDirs[drive]);
+	        	}
+        	}
 
-            SetDlgItemText(hDlg, IDD_DIRS, szDirs);
+	        SetDlgItemText(hDlg, IDD_DIRS, szDirs);
          }
 
          SendDlgItemMessage(hDlg, iCtrl, EM_LIMITTEXT, COUNTOF(szTo) - 1, 0L);
@@ -706,7 +693,6 @@ SuperDlgExit:
          case IDM_RENAME:
          case IDM_MOVE:
          case IDM_COPY:
-         case IDM_SYMLINK:
          case IDM_HARDLINK:
             if (NoQuotes(szTo))
                CheckEsc(szTo);
@@ -717,7 +703,6 @@ SuperDlgExit:
                  case IDM_RENAME:
                  case IDM_MOVE:
                  case IDM_COPY:
-                 case IDM_SYMLINK:
                  case IDM_HARDLINK:
                  {
                      szTo[0] = CHAR_DOT;
@@ -736,7 +721,7 @@ SuperDlgExit:
             LocalFree(pszFrom);
             goto SuperDlgExit;
 
-         } else {
+		 } else {
 
             if (dwSuperDlgMode == IDM_RENAME && bTreeHasFocus) {
                MessWithRenameDirPath(pszFrom);
@@ -761,7 +746,7 @@ Error:
                MessageBox(hwndFrame, szMessage, szTitle, MB_OK | MB_ICONEXCLAMATION);
 
                LocalFree(pszFrom);
-               goto SuperDlgExit;
+	           goto SuperDlgExit;
             }
 
             pCopyInfo->pFrom = pszFrom;
@@ -785,9 +770,6 @@ Error:
                break;
             case IDM_RENAME:
                pCopyInfo->dwFunc = FUNC_RENAME;
-               break;
-            case IDM_SYMLINK:
-               pCopyInfo->dwFunc = FUNC_LINK;
                break;
             case IDM_HARDLINK:
                 pCopyInfo->dwFunc = FUNC_HARD;

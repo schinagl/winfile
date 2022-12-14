@@ -17,7 +17,6 @@ BEGIN
     MENUITEM    "编辑\tF12",	    IDM_EDIT
     MENUITEM    "移动(&M)...\tF7",     IDM_MOVE
     MENUITEM    "复制(&C)...\tF8",     IDM_COPY
-    MENUITEM    "符号链接(&Y)...\tF11",    IDM_SYMLINK
     MENUITEM    "硬链接(&K)...\tShift+F11",IDM_HARDLINK
     MENUITEM    "复制到剪贴板(&B)...\tCtrl+C", IDM_COPYTOCLIPBOARD
 	MENUITEM    "剪切到剪贴板\tCtrl+X", IDM_CUTTOCLIPBOARD
@@ -137,7 +136,6 @@ BEGIN
     MENUITEM    "编辑\tF12",	    IDM_EDIT
     MENUITEM    "移动(&M)...\tF7",     IDM_MOVE
     MENUITEM    "复制(&C)...\tF8",     IDM_COPY
-    MENUITEM    "符号链接(&Y)...\tF11",    IDM_SYMLINK
     MENUITEM    "硬链接(&K)...\tShift+F11",IDM_HARDLINK
 	MENUITEM    "复制到剪贴板(&B)\tCtrl+C", IDM_COPYTOCLIPBOARD
 	MENUITEM    "剪切到剪贴板\tCtrl+X", IDM_CUTTOCLIPBOARD

@@ -308,14 +308,11 @@ DSDragLoop(HWND hwndLB, WPARAM wParam, LPDROPSTRUCT lpds)
    // Is the user holding down the CTRL key (which forces a copy)?
    //
    if (GetKeyState(VK_CONTROL) < 0) {
-       iShowBitmap = DROP_COPY;
-       if (GetKeyState(VK_SHIFT) < 0) {
-          iShowBitmap = DROP_LINK;
-          if (GetKeyState(VK_MENU) < 0) {
-             iShowBitmap = DROP_HARD;
-          }
-       }
-       goto DragLoopCont;
+      iShowBitmap = DROP_COPY;
+      if (GetKeyState(VK_MENU) < 0) {
+         iShowBitmap = DROP_HARD;
+      }
+      goto DragLoopCont;
    }
 
    //

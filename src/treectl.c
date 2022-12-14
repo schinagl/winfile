@@ -2903,11 +2903,8 @@ UpdateSelection:
       if (wParam) {
          if (GetKeyState(VK_CONTROL) < 0) {
             iOperation = DROP_COPY;
-            if (GetKeyState(VK_SHIFT) < 0) {
-               iOperation = DROP_LINK;
-               if (GetKeyState(VK_MENU) < 0) {
-                  iOperation = DROP_HARD;
-               }
+            if (GetKeyState(VK_MENU) < 0) {
+               iOperation = DROP_HARD;
             }
          }
          else if (GetKeyState(VK_MENU) < 0 || GetKeyState(VK_SHIFT) < 0) 
