@@ -1480,7 +1480,6 @@ AddExtensionToolbarButtons(BOOL bAll)
     nExtButtons = (INT)SendMessage(hwndExtensions, TB_BUTTONCOUNT, 0, 0L);
     for (nItem = 0; nItem < nExtButtons; ++nItem)
     {
-        INT iExt;
         SendMessage(hwndExtensions, TB_GETBUTTON, nItem,
             (LPARAM)(LPTBBUTTON)&tbButton);
 

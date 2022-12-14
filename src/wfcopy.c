@@ -2805,7 +2805,7 @@ SkipMKDir:
          Notify(hdlgProgress, IDS_CREATINGMSG, szDest, szNULL);
          switch (pCopyInfo->dwFunc) {
          case FUNC_LINK:
-            ret = WFSymbolicLink(szSource, szDest, SYMBOLIC_LINK_FLAG_DIRECTORY);
+            ret = WFSymbolicLink(szSource, szDest, 0);
             break;
 
          case FUNC_HARD:
@@ -3253,7 +3253,7 @@ RenameMoveDone:
       // Report any errors which have occurred
 
       if (ret) {
-
+         INT errorIndex;
 ShowMessageBox:
 
          //
@@ -3296,7 +3296,7 @@ ShowMessageBox:
             }
          }
 
-         INT errorIndex = pCopyInfo->dwFunc;
+         errorIndex = pCopyInfo->dwFunc;
          if (errorIndex == FUNC_HARD && IsDirectory(szSource))
            errorIndex = FUNC_JUNC;
          ret = CopyError(szSource, szDest, ret, errorIndex, oper, bErrorOnDest, bFatalError);

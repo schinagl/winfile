@@ -1085,8 +1085,6 @@ AppCommandProc(DWORD id)
        else
            lstrcpy(szToRun, TEXT("explorer.exe"));
 
-       TCHAR szParams[MAXPATHLEN] = { TEXT('\0') };
-
        ret = ExecProgram(szToRun, szDir, szDir, FALSE, FALSE);
        LocalFree(szDir);
    }

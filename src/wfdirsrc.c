@@ -26,17 +26,17 @@ GetMoveCopyCursor()
 {
    switch (iShowSourceBitmaps) {
    case DROP_COPY:
-      return LoadCursor(hAppInstance, (LPTSTR)MAKEINTRESOURCE(iCurDrag | 0b0001));
+      return LoadCursor(hAppInstance, (LPTSTR)MAKEINTRESOURCE(iCurDrag | 0x0001));
 
    case DROP_LINK:
-      return LoadCursor(hAppInstance, (LPTSTR)MAKEINTRESOURCE((iCurDrag | 0b0100) & ~0b0001));
+      return LoadCursor(hAppInstance, (LPTSTR)MAKEINTRESOURCE((iCurDrag | 0x04) & ~0x0001));
 
    case DROP_HARD:
-      return LoadCursor(hAppInstance, (LPTSTR)MAKEINTRESOURCE((iCurDrag | 0b1000) & ~0b0101));
+      return LoadCursor(hAppInstance, (LPTSTR)MAKEINTRESOURCE((iCurDrag | 0x8) & ~0x05));
 
    case DROP_MOVE:
    default:
-      return LoadCursor(hAppInstance, (LPTSTR)MAKEINTRESOURCE(iCurDrag & ~0b0001));
+      return LoadCursor(hAppInstance, (LPTSTR)MAKEINTRESOURCE(iCurDrag & ~0x0001));
    }
 }
 

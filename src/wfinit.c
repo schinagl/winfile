@@ -250,7 +250,7 @@ GetSettings()
 
    GetPrivateProfileString(szSettings,
                            szFace,
-                           szHelv,
+			   szHelv,
                            szTemp,
                            COUNTOF(szTemp),
                            szTheINIFile);
@@ -1003,13 +1003,13 @@ InitFileManager(
    lstrcpy(szTheINIFile, szBaseINIFile);
    dwRetval = GetEnvironmentVariable(TEXT("APPDATA"), szBuffer, MAXPATHLEN);
    if (dwRetval > 0 && dwRetval <= (DWORD)(MAXPATHLEN - lstrlen(szRoamINIPath) - 1 - lstrlen(szBaseINIFile) - 1)) {
-      wsprintf(szTheINIFile, TEXT("%s%s"), szBuffer, szRoamINIPath);
-      if (CreateDirectory(szTheINIFile, NULL) || GetLastError() == ERROR_ALREADY_EXISTS) {
-         wsprintf(szTheINIFile, TEXT("%s%s\\%s"), szBuffer, szRoamINIPath, szBaseINIFile);
-      }
-      else {
-         wsprintf(szTheINIFile, TEXT("%s\\%s"), szBuffer, szBaseINIFile);
-      }
+	   wsprintf(szTheINIFile, TEXT("%s%s"), szBuffer, szRoamINIPath);
+	   if (CreateDirectory(szTheINIFile, NULL) || GetLastError() == ERROR_ALREADY_EXISTS) {
+		   wsprintf(szTheINIFile, TEXT("%s%s\\%s"), szBuffer, szRoamINIPath, szBaseINIFile);
+	   }
+	   else {
+		   wsprintf(szTheINIFile, TEXT("%s\\%s"), szBuffer, szBaseINIFile);
+	   }
    }
 
    hKernel32 = GetModuleHandle(KERNEL32_DLL);
@@ -1065,9 +1065,9 @@ JAPANEND
       I_Space(i);
    }
 
-   if (OleInitialize(0) != NOERROR)
-      return FALSE;
-
+	if (OleInitialize(0) != NOERROR)
+		return FALSE;
+	
    //
    // Remember the current directory.
    //
@@ -1347,16 +1347,6 @@ JAPANEND
       HWND hwnd;
 
       hwndPrev = NULL; // FindWindow (szFrameClass, NULL);
-
-      // Check if developer mode is available in Windows10
-      OSVERSIONINFO  osversion;
-      osversion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-#pragma warning ( push )
-#pragma warning( disable : 4996 )
-      GetVersionEx(&osversion);
-#pragma warning ( pop )
-      if (osversion.dwMajorVersion >= 10 && osversion.dwBuildNumber >= 14972)
-         bDeveloperModeAvailable = TRUE;
 
       if (hwndPrev != NULL) {
          //  For Win32, this will accomplish almost the same effect as the
@@ -1644,7 +1634,7 @@ FreeFileManager()
    if (hVersion)
       FreeLibrary(hVersion);
 
-   OleUninitialize();
+	OleUninitialize();
 
 #undef CLOSEHANDLE
 }

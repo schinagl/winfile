@@ -35,7 +35,6 @@ VOID  InvalidateVolTypes( VOID );
 
 DWORD  GetNameType(LPTSTR);
 BOOL  IsLFN(LPTSTR pName);
-// BOOL  IsLFNDrive(LPTSTR);
 
 BOOL  WFFindFirst(LPLFNDTA lpFind, LPTSTR lpName, DWORD dwAttrFilter);
 BOOL  WFFindNext(LPLFNDTA);

@@ -126,6 +126,7 @@ OBJS= \
     "$(INTDIR)\wftree.obj" \
     "$(INTDIR)\wfutil.obj" \
     "$(INTDIR)\winfile.obj" \
+    "$(INTDIR)\resize.obj" \
     "$(INTDIR)\wnetcaps.obj"
 
 RCFILES=                     \

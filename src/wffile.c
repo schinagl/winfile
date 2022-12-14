@@ -126,10 +126,6 @@ DWORD MKDir(
       ChangeFileSystem(FSC_MKDIR, pName, NULL);
    } else {
       dwErr = GetLastError();
-
-      // CreateDirectoryEx does not support developer mode, so create symbolic ourselves
-      if (ERROR_PRIVILEGE_NOT_HELD == dwErr)
-         dwErr = WFCopyIfSymlink(pSrc, pName, SYMBOLIC_LINK_FLAG_DIRECTORY, FSC_MKDIR);
    }
 
    return dwErr;

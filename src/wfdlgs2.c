@@ -137,6 +137,8 @@ SearchDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam)
 
       case WM_COMMAND:
           switch (GET_WM_COMMAND_ID(wParam, lParam)) {
+             BOOL bMaximized;
+             HWND hwndMDIChild;
 
               case IDD_HELP:
                   goto DoHelp;
@@ -186,8 +188,8 @@ SearchDlgProc(HWND hDlg, UINT wMsg, WPARAM wParam, LPARAM lParam)
                   SearchInfo.bCancel = FALSE;
 
          // Retrieve state of search window
-					  BOOL bMaximized = FALSE;
-					  HWND hwndMDIChild = (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, (LPARAM)&bMaximized);
+					  bMaximized = FALSE;
+					  hwndMDIChild = (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, (LPARAM)&bMaximized);
 
          /* Is the search window already up? */
          if (hwndSearch == NULL) {

@@ -507,28 +507,6 @@ LFNMergePath(LPTSTR lpMask, LPTSTR lpFile)
    return TRUE;
 }
 
-/* WFCopyIfSymlink
- *
- *  Copies symbolic links 
- */
-DWORD
-WFCopyIfSymlink(LPTSTR pszFrom, LPTSTR pszTo, DWORD dwFlags, DWORD dwNotification)
-{
-   DWORD dwRet;
-   WCHAR szReparseDest[2 * MAXPATHLEN];
-   DWORD dwReparseTag = DecodeReparsePoint(pszFrom, szReparseDest, 2 * MAXPATHLEN);
-   if (IO_REPARSE_TAG_SYMLINK == dwReparseTag) {
-      CreateSymbolicLink(pszTo, szReparseDest, dwFlags | (bDeveloperModeAvailable ? SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE : 0));
-      dwRet = GetLastError();
-      if (ERROR_SUCCESS == dwRet)
-         ChangeFileSystem(dwNotification, pszTo, NULL);
-   }
-   else
-      dwRet = GetLastError();
-
-   return dwRet;
-}
-
 /* WFCopy
  *
  *  Copies files
@@ -541,8 +519,7 @@ WFCopy(LPTSTR pszFrom, LPTSTR pszTo)
 
     Notify(hdlgProgress, IDS_COPYINGMSG, pszFrom, pszTo);
 
-    BOOL bCancel = FALSE;
-    if (CopyFileEx(pszFrom, pszTo, NULL, NULL, &bCancel, COPY_FILE_COPY_SYMLINK)) {
+    if (CopyFile(pszFrom, pszTo, FALSE)) {
         ChangeFileSystem(FSC_CREATE, pszTo, NULL);
         dwRet = 0;
     }
@@ -556,7 +533,6 @@ WFCopy(LPTSTR pszFrom, LPTSTR pszTo)
           //  This is for the case where it's trying to copy to a print
           //  share.  CopyFile fails if the file name is tacked onto the
           //  end in the case of printer shares. 
-          //  We do not handle symlinks here as we did above
           //
           lstrcpy(szTemp, pszTo);
           RemoveLast(szTemp);
@@ -566,10 +542,6 @@ WFCopy(LPTSTR pszFrom, LPTSTR pszTo)
           }
 
           // else ... use the original dwRet value.
-          break;
-
-       case ERROR_PRIVILEGE_NOT_HELD:
-          dwRet = WFCopyIfSymlink(pszFrom, pszTo, 0, FSC_CREATE);
           break;
        }
     }
@@ -605,18 +577,7 @@ WFHardLink(LPTSTR pszFrom, LPTSTR pszTo)
 DWORD
 WFSymbolicLink(LPTSTR pszFrom, LPTSTR pszTo, DWORD dwFlags)
 {
-   DWORD dwRet;
-
-   Notify(hdlgProgress, IDS_COPYINGMSG, pszFrom, pszTo);
-
-   if (CreateSymbolicLink(pszTo, pszFrom, dwFlags | (bDeveloperModeAvailable ? SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE : 0))) {
-      ChangeFileSystem(FSC_CREATE, pszTo, NULL);
-      dwRet = ERROR_SUCCESS;
-   } else {
-      dwRet = GetLastError();
-   }
-
-   return dwRet;
+   return ERROR_SUCCESS;
 }
 
 typedef struct _REPARSE_DATA_BUFFER {
@@ -668,7 +629,11 @@ DWORD WFJunction(LPCWSTR pszLinkDirectory, LPCWSTR pszLinkTarget)
    WCHAR		szTargetName[MAXPATHLEN];
    PWCHAR	szFilePart;
    DWORD		dwLength;
-
+   BOOL     bDirCreated;
+   HANDLE   hFile;
+   WCHAR    szSubstituteName[MAXPATHLEN];
+   PREPARSE_DATA_BUFFER reparseJunctionInfo;
+   size_t lenSub;
 
    // Get the full path referenced by the target
    if (!GetFullPathName(pszLinkTarget, MAXPATHLEN, szTargetName, &szFilePart))
@@ -679,7 +644,7 @@ DWORD WFJunction(LPCWSTR pszLinkDirectory, LPCWSTR pszLinkTarget)
       return GetLastError();
 
    // Create the link - ignore errors since it might already exist
-   BOOL bDirCreated = CreateDirectory(pszLinkDirectory, NULL);
+   bDirCreated = CreateDirectory(pszLinkDirectory, NULL);
    if (!bDirCreated) {
       DWORD dwErr = GetLastError();
       if (ERROR_ALREADY_EXISTS != dwErr)
@@ -697,7 +662,7 @@ DWORD WFJunction(LPCWSTR pszLinkDirectory, LPCWSTR pszLinkTarget)
       }
    }
 
-   HANDLE hFile = CreateFile(
+   hFile = CreateFile(
       pszLinkDirectory,
       GENERIC_WRITE,
       0,
@@ -709,9 +674,6 @@ DWORD WFJunction(LPCWSTR pszLinkDirectory, LPCWSTR pszLinkTarget)
 
    if (INVALID_HANDLE_VALUE == hFile)
       return GetLastError();
-
-   // Make the native target name
-   WCHAR szSubstituteName[MAXPATHLEN];
 
    // The target might be
    if (IsVeryLongPath(szTargetName)) {
@@ -729,11 +691,11 @@ DWORD WFJunction(LPCWSTR pszLinkDirectory, LPCWSTR pszLinkTarget)
 
    // Delete the trailing slashes for non root path x:\path\foo\ -> x:\path\foo, but keep x:\
    // Furthermore keep \\?\Volume{GUID}\ for 'root' volume-names
-   size_t lenSub = wcslen(szSubstituteName);
+   lenSub = wcslen(szSubstituteName);
    if ((szSubstituteName[lenSub - 1] == L'\\') && (szSubstituteName[lenSub - 2] != L':') && (szSubstituteName[lenSub - 2] != L'}'))
       szSubstituteName[lenSub - 1] = 0;
 
-   PREPARSE_DATA_BUFFER reparseJunctionInfo = (PREPARSE_DATA_BUFFER)reparseBuffer;
+   reparseJunctionInfo = (PREPARSE_DATA_BUFFER)reparseBuffer;
    memset(reparseJunctionInfo, 0, sizeof(REPARSE_DATA_BUFFER));
    reparseJunctionInfo->ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
 

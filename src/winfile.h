@@ -88,6 +88,15 @@ typedef unsigned char TUCHAR, *PTUCHAR;
 #define FS_FILE_COMPRESSION 0x0010
 #endif  //  FS_FILE_COMPRESSION
 
+#ifndef IO_REPARSE_TAG_MOUNT_POINT
+#define IO_REPARSE_TAG_MOUNT_POINT              (0xA0000003L)
+#endif
+
+#ifndef IO_REPARSE_TAG_SYMLINK
+#define IO_REPARSE_TAG_SYMLINK                  (0xA000000CL)
+#endif
+
+
 
 #define atoi atoiW
 INT atoiW(LPWSTR sz);
@@ -654,6 +663,7 @@ DWORD DecodeReparsePoint(LPCWSTR szMyFile, LPWSTR szDest, DWORD cwcDest);
 DWORD WFHardLink(LPTSTR pszFrom, LPTSTR pszTo);
 DWORD WFSymbolicLink(LPTSTR pszFrom, LPTSTR pszTo, DWORD dwFlags);
 DWORD WFJunction(LPCWSTR LinkDirectory, LPCWSTR LinkTarget);
+BOOL IsLFNDrive(LPTSTR szDrive);
 
 
 
@@ -1412,8 +1422,6 @@ Extern TCHAR szFmifsDll[]    EQ( TEXT("fmifs.dll") );
 
 Extern   CANCEL_INFO CancelInfo;
 Extern   SEARCH_INFO SearchInfo;
-
-Extern BOOL  bDeveloperModeAvailable EQ(FALSE);
 
 // this value is an index into dwMenuIDs and used to workaround a bug
 #define MHPOP_CURRENT 2
