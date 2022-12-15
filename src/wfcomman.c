@@ -1135,7 +1135,84 @@ AppCommandProc(DWORD id)
 		}
 		break;
 
-   case IDM_CLOSEWINDOW:
+    case IDM_OPEN_UNC:
+    {
+        IDataObject *pDataObj;
+        FORMATETC fmtetcDrop = { 0, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+        UINT uFormatEffect = RegisterClipboardFormat(CFSTR_PREFERREDDROPEFFECT);
+        FORMATETC fmtetcEffect = { uFormatEffect, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+        STGMEDIUM stgmed;
+        LPWSTR szFiles = NULL;
+
+        OleGetClipboard(&pDataObj);		// pDataObj == NULL if error
+
+        if (pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcEffect, &stgmed) == S_OK)
+        {
+            LPDWORD lpEffect = GlobalLock(stgmed.hGlobal);
+            GlobalUnlock(stgmed.hGlobal);
+            ReleaseStgMedium(&stgmed);
+        }
+
+        // Try CF_HDROP
+        if (pDataObj != NULL)
+            szFiles = GetDropList(pDataObj, FALSE);
+
+        // Try CF_UNICODETEXT
+        fmtetcDrop.cfFormat = CF_UNICODETEXT;
+        if (szFiles == NULL && pDataObj != NULL && pDataObj->lpVtbl->GetData(pDataObj, &fmtetcDrop, &stgmed) == S_OK)
+        {
+            LPWSTR lpFile = GlobalLock(stgmed.hGlobal);
+            SIZE_T cchFile = wcslen(lpFile);
+            szFiles = (LPWSTR)LocalAlloc(LMEM_FIXED, (cchFile + 3) * sizeof(WCHAR));
+            lstrcpy(szFiles, lpFile);
+            *(szFiles + cchFile) = '\0';
+
+            GlobalUnlock(stgmed.hGlobal);
+
+            // release the data using the COM API
+            ReleaseStgMedium(&stgmed);
+        }
+
+        if (szFiles != NULL)
+        {
+           HWND hwndNew = NULL;
+           if (!(GetFileAttributes(szFiles) & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_REPARSE_POINT)))
+                StripFilespec(szFiles);
+            
+            // Change the current windows to the content of the clipboard
+            hwndActive = (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, 0L);
+            if (ISUNCPATH(szFiles))
+            {
+               // For UNC path this is the place of opening a new UNC window.
+               // Use CTRL+W to remove the number-drive mapping and close it
+               DRIVE freeDriveFound = AddUNCDrive(szFiles);
+               switch (freeDriveFound)
+               {
+               case -1:
+                  // UNC Loop found. Throw your favourite messagebox here
+                  break;
+
+               case 0:
+                  // Out of free UNC Slots. Throw your favourite messagebox here
+                  break;
+
+                  // drive slot found > 0
+               default:
+                  hwndNew = CreateDirWindow(szFiles, FALSE, hwndActive);
+                  if (hwndNew)
+                     RefreshWindow(hwndNew, TRUE, TRUE);
+               }
+            }
+
+            LocalFree((HLOCAL)szFiles);
+        }
+
+        if (pDataObj != NULL)
+            pDataObj->lpVtbl->Release(pDataObj);
+    }
+    break;
+
+  case IDM_CLOSEWINDOW:
        {
            HWND      hwndActive;
 
@@ -1213,7 +1290,7 @@ AppCommandProc(DWORD id)
       
 	  // Try CF_HDROP
 	  if(pDataObj != NULL)
-		szFiles = QuotedDropList(pDataObj);
+		szFiles = GetDropList(pDataObj, TRUE);
 
 	  // Try CFSTR_FILEDESCRIPTOR
 	  if (szFiles == NULL)

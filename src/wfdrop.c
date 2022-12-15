@@ -84,7 +84,7 @@ void PaintRectItem(WF_IDropTarget *This, POINTL *ppt)
 }
 
 
-LPWSTR QuotedDropList(IDataObject *pDataObject)
+LPWSTR GetDropList(IDataObject *pDataObject, BOOL aQuote)
 {
 	HDROP hdrop;
 	DWORD cFiles, iFile, cchFiles;
@@ -107,11 +107,13 @@ LPWSTR QuotedDropList(IDataObject *pDataObject)
 		{
 			DWORD cchFile;
 
-			*pch++ = CHAR_DQUOTE;
+			if (aQuote)
+                *pch++ = CHAR_DQUOTE;
 			
 			cchFile = DragQueryFile(hdrop, iFile, pch, cchFiles);
 			pch += cchFile;
-			*pch++ = CHAR_DQUOTE;
+            if (aQuote)
+                *pch++ = CHAR_DQUOTE;
 
 			if (iFile+1 < cFiles)
 				*pch++ = CHAR_SPACE;
@@ -560,7 +562,7 @@ void DropData(WF_IDropTarget *This, IDataObject *pDataObject, DWORD dwEffect)
     CheckEsc(szDest);
 
 	// See if the dataobject contains any TEXT stored as a HGLOBAL
-	if ((szFiles = QuotedDropList(pDataObject)) == NULL)
+	if ((szFiles = GetDropList(pDataObject, TRUE)) == NULL)
 	{
 		szFiles = QuotedContentList(pDataObject);
 		dwEffect = DROPEFFECT_MOVE; 

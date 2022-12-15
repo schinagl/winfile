@@ -79,7 +79,7 @@ BEGIN
 	"^w",       IDM_CLOSEWINDOW, NOINVERT
 	"^l",       IDM_LINK, NOINVERT
 	"^d",       IDM_BYDATE, NOINVERT
-   "^j", IDM_JUMPDIR, NOINVERT
+   "^g",       IDM_OPEN_UNC, NOINVERT
    "^n",       IDM_BYNAME, NOINVERT
 END
 
