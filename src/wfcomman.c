@@ -1170,7 +1170,7 @@ AppCommandProc(DWORD id)
       break;
 
    case IDM_LINK:
-      dwDrop1 = DROP_LINK;
+      dwDrop1 = DROP_HARD;
       dwDrop2 = DROP_HARD;
 
       goto DropIt;

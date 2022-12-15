@@ -17,7 +17,7 @@ BEGIN
     MENUITEM    "Edytuj\tF12",                    IDM_EDIT
     MENUITEM    "&Przenieś...\tF7",               IDM_MOVE
     MENUITEM    "Kop&iuj...\tF8",                 IDM_COPY
-    MENUITEM    "Twardy li&nk...\tShift+F11",     IDM_HARDLINK
+    MENUITEM    "Twardy li&nk...\tF11",     IDM_HARDLINK
     MENUITEM    "Kopiuj do S&chowka\tCtrl+C",     IDM_COPYTOCLIPBOARD
     MENUITEM    "Wytnij do Schowka\tCtrl+X",      IDM_CUTTOCLIPBOARD
     MENUITEM    "&Wklej\tCtrl+V",                 IDM_PASTE
@@ -136,7 +136,7 @@ BEGIN
     MENUITEM    "Edytuj\tF12",                    IDM_EDIT
     MENUITEM    "&Przenieś...\tF7",               IDM_MOVE
     MENUITEM    "Kop&iuj...\tF8",                 IDM_COPY
-    MENUITEM    "Twardy li&nk...\tShift+F11",     IDM_HARDLINK
+    MENUITEM    "Twardy li&nk...\tF11",     IDM_HARDLINK
     MENUITEM    "Kopiuj do S&chowka\tCtrl+C",     IDM_COPYTOCLIPBOARD
     MENUITEM    "Wytnij do Schowka\tCtrl+X",      IDM_CUTTOCLIPBOARD
     MENUITEM    "&Wklej\tCtrl+V",                 IDM_PASTE
