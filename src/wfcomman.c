@@ -543,16 +543,14 @@ CreateDirWindow(
 		   if (drive == rgiDrive[i])
 		   {
 			   // if not already selected, do so now
-			   if (i != SendMessage(hwndDriveList, CB_GETCURSEL, i, 0L))
-			   {
+            if (i != SendMessage(hwndDriveList, CB_GETCURSEL, i, 0L)) {
 				   SelectToolbarDrive(i);
 			   }
 			   break;
 		   }
 	   }
 
-	   if (hwndT = HasDirWindow(hwndActive))
-	   {
+      if (hwndT = HasDirWindow(hwndActive)) {
 		   WCHAR szFileSpec[MAXPATHLEN];
 
 		   AddBackslash(szPath);                   // default to all files
@@ -566,8 +564,7 @@ CreateDirWindow(
 	   // update the tree if necessary
 	   //
 	   ;
-	   if (hwndT = HasTreeWindow(hwndActive))
-	   {
+      if (hwndT = HasTreeWindow(hwndActive)) {
 		   SendMessage(hwndT, TC_SETDRIVE, 0, (LPARAM)(szPath));
 	   }
 
@@ -1150,8 +1147,8 @@ AppCommandProc(DWORD id)
               RemoveUNCDrive(szPath);
               RefreshWindow(hwndActive, TRUE, TRUE);
 
-           PostMessage(hwndActive, WM_CLOSE, 0, 0L);
-       }
+              PostMessage(hwndActive, WM_CLOSE, 0, 0L);
+           }
        }
        break;
 
