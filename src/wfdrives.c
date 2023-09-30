@@ -364,6 +364,7 @@ CheckDrive(HWND hwnd, DRIVE drive, DWORD dwFunc)
    DRIVEIND driveInd;
    HCURSOR hCursor;
    WCHAR szDrive[MAXPATHLEN] = SZ_ACOLON;
+   INT iNetDrive;
 
    // Put up the hourglass cursor since this
    // could take a long time
@@ -382,7 +383,6 @@ CheckDrive(HWND hwnd, DRIVE drive, DWORD dwFunc)
    while ((driveInd < cDrives) && (rgiDrive[driveInd] != drive))
        driveInd++;
 
-   INT iNetDrive;
    if (drive < OFFSET_UNC)
       iNetDrive = IsNetDrive(drive);
    else

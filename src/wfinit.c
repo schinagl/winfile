@@ -691,7 +691,7 @@ GetSavedWindow(
 {
    PINT pint;
    INT count;
-
+   LPTSTR szDir;
    //
    // defaults
    //
@@ -737,7 +737,7 @@ GetSavedWindow(
    // e.g. 
    //   dir1==....,\\unc\path1\*.*"\\unc\path1\aurea\prima
    // It is " because is must be a character, which is not allowed in pathnames
-   LPTSTR szDir = szBuf;
+   szDir = szBuf;
    while (*szBuf && *szBuf != CHAR_DQUOTE)
       szBuf++;
    if (*szBuf) {

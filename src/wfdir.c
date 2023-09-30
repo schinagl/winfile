@@ -3166,6 +3166,8 @@ UpdateStatus(HWND hwnd)
 
       } else {
 
+         WCHAR szRoot[MAXPATHLEN];
+
          //
          // cache free disk space for update status only
          // Now lFreeSpace == -3 means do a refresh (hit disk!)
@@ -3183,7 +3185,6 @@ UpdateStatus(HWND hwnd)
          qFreeSpace=aDriveInfo[drive].qFreeSpace;
          qTotalSpace=aDriveInfo[drive].qTotalSpace;
 
-         WCHAR szRoot[MAXPATHLEN] = { 0 };
          if (drive < OFFSET_UNC) {
             lstrcpy(szRoot, SZ_ACOLON);
             DRIVESET(szRoot, drive);

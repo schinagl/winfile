@@ -634,6 +634,7 @@ ReadDirLevel(
    INT       count;
 
    UINT      uYieldCount = 0;
+   BOOL      bCasePreserved;
 
    hwndParent = GetParent(hwndTreeCtl);
 
@@ -804,7 +805,7 @@ ReadDirLevel(
          iNode, dwAttribs, bFullyExpand, szAutoExpand, bPartialSort);
   }
 
-   BOOL bCasePreserved = IsCasePreservedDrive(DRIVEID(szPath));
+  bCasePreserved = IsCasePreservedDrive(DRIVEID(szPath));
   while (bFound) {
 
       if (uYieldCount & (1<<READDIRLEVEL_YIELDBIT))
@@ -3296,13 +3297,15 @@ SameSelection:
 INT
 BuildTreeName(LPTSTR lpszPath, INT iLen, INT iSize)
 {
+   DRIVE drive;
+
    // Check for \\ aka UNC
    if (!ISUNCPATH(lpszPath))
       // Check for X:\ 
    if (3 != iLen || CHAR_BACKSLASH != lpszPath[2])
       return iLen;
 
-   DRIVE drive = DRIVEID(lpszPath);
+   drive = DRIVEID(lpszPath);
 
    lstrcat(lpszPath, SZ_FILESYSNAMESEP);
    iLen = lstrlen(lpszPath);

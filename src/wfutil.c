@@ -1625,7 +1625,8 @@ BOOL TypeAheadString(WCHAR ch, LPWSTR szT)
 // Search the list of slots if path would be parent of already existing drive == circularity
 BOOL FindUNCLoop(LPCTSTR path)
 {
-   for (DWORD dwDriveIndex = OFFSET_UNC; dwDriveIndex < MAX_DRIVES; ++dwDriveIndex) {
+   DWORD dwDriveIndex;
+   for (dwDriveIndex = OFFSET_UNC; dwDriveIndex < MAX_DRIVES; ++dwDriveIndex) {
       if (aDriveInfo[dwDriveIndex].szRoot[0] && StrStrIW(aDriveInfo[dwDriveIndex].szRoot, path))
          return TRUE;
    }
@@ -1634,8 +1635,9 @@ BOOL FindUNCLoop(LPCTSTR path)
 
 DRIVE FindUNCDrive(LPCTSTR path, PDWORD pdwFreeDriveSlot)
 {
+   DWORD dwDriveIndex;
    // Search the list of slots if drive is already there
-   for (DWORD dwDriveIndex = OFFSET_UNC; dwDriveIndex < MAX_DRIVES; ++dwDriveIndex) {
+   for (dwDriveIndex = OFFSET_UNC; dwDriveIndex < MAX_DRIVES; ++dwDriveIndex) {
       // Found existing slot
       if (aDriveInfo[dwDriveIndex].szRoot[0] && StrStrIW(path, aDriveInfo[dwDriveIndex].szRoot))
          // Added an UNC drive which already existed
@@ -1652,12 +1654,14 @@ DRIVE FindUNCDrive(LPCTSTR path, PDWORD pdwFreeDriveSlot)
 // Possible failure reasons: Exceeded number of free numbered drives or UNC cirularity
 DRIVE AddUNCDrive(LPTSTR path)
 {
+   DWORD dwFreeDriveSlot = 0;
+   DRIVE drive;
+
    StripBackslash(path);
    if (FindUNCLoop(path))
       return -1;
 
-   DWORD dwFreeDriveSlot = 0;
-   DRIVE drive = FindUNCDrive(path, &dwFreeDriveSlot);
+   drive = FindUNCDrive(path, &dwFreeDriveSlot);
    if (!drive && dwFreeDriveSlot) {
       // Havent't found an existing slot, so add new to first free found
       lstrcpy(aDriveInfo[dwFreeDriveSlot].szRoot, path);
@@ -1672,7 +1676,8 @@ DRIVE AddUNCDrive(LPTSTR path)
 DRIVE RemoveUNCDrive(LPCTSTR path)
 {
    DWORD dwFreeDriveSlot = 0;
-   DRIVE drive = FindUNCDrive(path, &dwFreeDriveSlot);
+   DRIVE drive;
+   drive = FindUNCDrive(path, &dwFreeDriveSlot);
    if (drive) {
       // Found an empty slot so mark it free
       aDriveInfo[drive].szRoot[0] = '\0';
@@ -1685,15 +1690,16 @@ DRIVE RemoveUNCDrive(LPCTSTR path)
 
 DRIVE DRIVEID(LPCTSTR path)
 {
-  DRIVE drive = toupper(path[0]);
-  if (drive >= CHAR_A && drive <= CHAR_Z)
-    // regular drive
-    return drive - CHAR_A;
+   DWORD dwFreeDriveSlot = 0;
+   DRIVE drive;
+   drive = toupper(path[0]);
+   if (drive >= CHAR_A && drive <= CHAR_Z)
+      // regular drive
+      return drive - CHAR_A;
 
-  DWORD dwFreeDriveSlot = 0;
-  drive = FindUNCDrive(path, &dwFreeDriveSlot);
-  if (drive)
-     return drive;
- 
-  return MAX_DRIVES;
+   drive = FindUNCDrive(path, &dwFreeDriveSlot);
+   if (drive)
+      return drive;
+
+   return MAX_DRIVES;
 }

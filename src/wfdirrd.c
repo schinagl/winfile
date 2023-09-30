@@ -723,6 +723,7 @@ CreateDTABlockWorker(
    LPXDTALINK lpStart;
 
    INT iError = 0;
+   BOOL bShowDotDot;
 
    lpStart = MemNew();
 
@@ -900,7 +901,6 @@ Fail:
       goto CDBDiskGone;
 
    // Check if we are at the root of a drive
-   BOOL bShowDotDot;
    if (drive < OFFSET_UNC)
       bShowDotDot = (lpTemp - szPath) > 3;
    else {

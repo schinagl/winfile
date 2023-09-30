@@ -72,6 +72,7 @@ DO_AGAIN:
 
       if ((GetWindow(hwnd, GW_OWNER) == NULL) &&
          GetWindowLongPtr(hwnd, GWL_TYPE) != TYPE_SEARCH) /* nReadLevel == 0) */ {
+         INT drive;
 
          if (bCounting) {
             dir_num++;
@@ -89,7 +90,7 @@ DO_AGAIN:
 
          wsprintf(key, szDirKeyFormat, dir_num--);
 
-         INT drive = DRIVEID(szPath);
+         drive = DRIVEID(szPath);
          if (drive < OFFSET_UNC) {
             // format:
             //   x_win, y_win,
