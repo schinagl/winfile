@@ -43,7 +43,6 @@ BEGIN
     MENUITEM    "&PowerShell...\tCtrl+P", IDM_STARTPOWERSHELL
     MENUITEM    "&Explorer...\tCtrl+E", IDM_STARTEXPLORER
     END
-    MENUITEM    "&Ir para Directório...\tCtrl+G", IDM_GOTODIR
     MENUITEM    SEPARATOR
     MENUITEM    "&Sair",            IDM_EXIT
     END
@@ -97,7 +96,6 @@ BEGIN
     MENUITEM    "Barra de &Estado",              IDM_STATUSBAR
     MENUITEM    SEPARATOR
     MENUITEM    "Executar &Minimizado",     IDM_MINONRUN
-    MENUITEM    "Criar &Index 'Ir para' ao Ligar", IDM_INDEXONLAUNCH
     MENUITEM    "&Guardar Definições ao Sair",   IDM_SAVESETTINGS
 #ifdef PROGMAN
     MENUITEM    SEPARATOR
@@ -152,7 +150,6 @@ BEGIN
     MENUITEM    "Iniciar a Cmd She&ll...", IDM_STARTCMDSHELL
     MENUITEM    "Iniciar a Po&werShell...", IDM_STARTPOWERSHELL
     MENUITEM    "Iniciar o &Explorer...", IDM_STARTEXPLORER
-    MENUITEM    "&Ir para Directório...", IDM_GOTODIR
     END
 END
 
@@ -608,7 +605,6 @@ BEGIN
     MH_MYITEMS+IDM_NEWWINONCONNECT,     "Abre uma nova janela quando ligar"
 
     MH_MYITEMS+IDM_MINONRUN,    "Reduz o 'Gestor de Ficheiros' a um ícone no arranque"
-    MH_MYITEMS + IDM_INDEXONLAUNCH, "Cria um index para 'Ir para Directório' quandoo 'Gestor de Ficheiros' inicia"
     MH_MYITEMS+IDM_SAVESETTINGS,        "Guarda as definições na saída do 'Gestor de Ficheiros'"
 
     MH_MYITEMS+IDM_NEWWINDOW,   "Abre uma nova janela"
