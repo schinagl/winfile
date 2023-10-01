@@ -1,0 +1,155 @@
+/********************************************************************
+
+   res.rc
+
+   Copyright (c) Microsoft Corporation. All rights reserved.
+   Licensed under the MIT License.
+
+********************************************************************/
+
+// fix loading in VS per https://stackoverflow.com/questions/16537289/rc2247-cannot-open-rc-file-resource-explorer-cannot-load-resource-load-fai/18317658#18317658
+
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include <windows.h>
+#include <prsht.h>
+#include "res.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+#include "wfcopy.h"
+
+
+BITMAPS         BITMAP PRELOAD wbbitmap.bmp
+
+IDB_TOOLBAR     BITMAP PRELOAD toolbar.bmp
+IDB_EXTRATOOLS  BITMAP PRELOAD xtratool.bmp
+
+APPICON     ICON   PRELOAD winfile.ico
+TREEICON    ICON   PRELOAD wftree.ico
+DIRICON     ICON   PRELOAD wfdir.ico
+TREEDIRICON ICON   PRELOAD wftrdir.ico
+
+SPLITCURSOR     CURSOR PRELOAD split.cur
+SINGLEMOVECURSOR    CURSOR smove.cur
+MULTMOVECURSOR      CURSOR mmove.cur
+SINGLECOPYCURSOR    CURSOR scopy.cur
+MULTCOPYCURSOR      CURSOR mcopy.cur
+SINGLELINKCURSOR    CURSOR slink.cur
+MULTLINKCURSOR      CURSOR mlink.cur
+SINGLEHARDCURSOR    CURSOR shard.cur
+MULTHARDCURSOR      CURSOR mhard.cur
+
+WFACCELTABLE ACCELERATORS PRELOAD
+BEGIN
+    VK_ESCAPE,  IDM_ESCAPE,     NOINVERT, VIRTKEY
+    VK_RETURN,  IDM_OPEN,       NOINVERT, VIRTKEY
+    VK_RETURN,  IDM_OPEN,       NOINVERT, VIRTKEY, SHIFT
+    VK_RETURN,  IDM_OPEN,       NOINVERT, VIRTKEY, CONTROL
+    "N",        IDM_MAKEDIR,    VIRTKEY, SHIFT, CONTROL, NOINVERT
+    VK_F12,     IDM_EDIT,       VIRTKEY
+    VK_F7,      IDM_MOVE,       VIRTKEY
+    VK_F8,      IDM_COPY,       VIRTKEY
+    VK_F9,      IDM_COPYTOCLIPBOARD, VIRTKEY
+    VK_F11,     IDM_SYMLINK,    VIRTKEY
+    VK_F11,     IDM_HARDLINK,    VIRTKEY, SHIFT
+    VK_DELETE,  IDM_DELETE,     VIRTKEY
+    VK_DELETE,  IDM_DELETE,     VIRTKEY, CONTROL
+    VK_F5,      IDM_CASCADE,    NOINVERT, VIRTKEY, SHIFT
+    VK_F4,      IDM_TILE,       NOINVERT, VIRTKEY, SHIFT
+    VK_F5,      IDM_REFRESH,    NOINVERT, VIRTKEY
+    VK_F1,      IDM_HELPINDEX,  VIRTKEY
+    "+",        IDM_EXPONE,     NOINVERT
+    VK_ADD,     IDM_EXPONE,     NOINVERT, VIRTKEY
+    "*",        IDM_EXPSUB,     NOINVERT
+    VK_MULTIPLY,IDM_EXPSUB,     NOINVERT, VIRTKEY
+    "8",        IDM_EXPALL,     NOINVERT, VIRTKEY, CONTROL, SHIFT
+    VK_MULTIPLY,IDM_EXPALL,     NOINVERT, VIRTKEY, CONTROL
+    "-",        IDM_COLLAPSE,   NOINVERT
+    VK_SUBTRACT,IDM_COLLAPSE,   NOINVERT, VIRTKEY
+
+    VK_RETURN,  IDM_ATTRIBS,    NOINVERT, VIRTKEY, ALT
+    VK_RETURN,  IDM_NEWWINDOW,  NOINVERT, VIRTKEY, CONTROL, SHIFT
+    VK_F2,      IDM_RENAME, NOINVERT, VIRTKEY
+	"^e",       IDM_STARTEXPLORER, NOINVERT
+	"^x",       IDM_CUTTOCLIPBOARD, NOINVERT
+	"^c",       IDM_COPYTOCLIPBOARD, NOINVERT
+	"^v",       IDM_PASTE, NOINVERT
+	"^b",       IDM_STARTBASHSHELL, NOINVERT
+	"^k",       IDM_STARTCMDSHELL, NOINVERT
+	"^p",       IDM_STARTPOWERSHELL, NOINVERT
+	"^f",       IDM_SEARCH, NOINVERT
+	"^w",       IDM_CLOSEWINDOW, NOINVERT
+	"^l",       IDM_LINK, NOINVERT
+	"^d",       IDM_BYDATE, NOINVERT
+   "^j", IDM_JUMPDIR, NOINVERT
+   "^n",       IDM_BYNAME, NOINVERT
+END
+
+// Define version information
+#define VER_FILEDESCRIPTION_STR     "File Manager"
+#define VER_INTERNALNAME_STR        "fileman\0"
+#define VER_ORIGINALFILENAME_STR    "WINFILE.EXE"
+#define VER_COMPANYNAME_STR         "Microsoft Corporation"
+#define VER_PRODUCTNAME_STR         "File Manager"
+#define VER_LEGALCOPYRIGHT_STR      "Copyright (c) Microsoft Corporation. All rights reserved."
+
+#define VER_FILEVERSION             10,2,0,15
+#define VER_FILEVERSION_STR         "10.2.0.15\0"
+#define VER_PRODUCTVERSION          10,2,0,15
+#define VER_PRODUCTVERSION_STR      "10.2.0.15\0"
+
+#ifndef DEBUG
+#define VER_DEBUG                   0
+#else
+#define VER_DEBUG                   VS_FF_DEBUG
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+    FILEVERSION     VER_FILEVERSION
+    PRODUCTVERSION  VER_PRODUCTVERSION
+    FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+    FILEFLAGS       VER_DEBUG
+    FILEOS          VOS__WINDOWS32
+    FILETYPE        VFT_APP
+    FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", VER_COMPANYNAME_STR
+            VALUE "FileDescription", VER_FILEDESCRIPTION_STR
+            VALUE "FileVersion", VER_FILEVERSION_STR
+            VALUE "InternalName", VER_INTERNALNAME_STR
+            VALUE "OriginalFilename", VER_ORIGINALFILENAME_STR
+            VALUE "ProductName", VER_PRODUCTNAME_STR
+            VALUE "ProductVersion", VER_PRODUCTVERSION_STR
+            VALUE "LegalCopyright", VER_LEGALCOPYRIGHT_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 1033, 1200
+    END
+END
+
+#ifndef RT_MANIFEST
+#define RT_MANIFEST 24
+#endif
+
+#ifndef CREATEPROCESS_MANIFEST_RESOURCE_ID
+#define CREATEPROCESS_MANIFEST_RESOURCE_ID 1
+#endif
+
+#ifdef __MINGW32__
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "winfile.exe.manifest"
+#endif
+
+//Language includes
+#pragma code_page(65001) //UTF-8
+#include "lang\res_en-US.rc"
+#include "lang\res_zh-CN.rc"
+#include "lang\res_ja-JP.rc"
+#include "lang\res_pl-PL.rc"
+#include "lang\res_he-IL.rc"
+#include "lang\res_de-DE.rc"
+#include "lang\res_tr-TR.rc"
+#include "lang\res_pt-PT.rc"

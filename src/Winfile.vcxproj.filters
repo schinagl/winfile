@@ -36,11 +36,13 @@
     <ClCompile Include="winfile.c" />
     <ClCompile Include="wnetcaps.c" />
     <ClCompile Include="wfloc.c" />
+    <ClCompile Include="Resize.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dbg.h" />
     <ClInclude Include="fmifs.h" />
     <ClInclude Include="lfn.h" />
+    <ClInclude Include="BagOValues.h" />
     <ClInclude Include="mpr.h" />
     <ClInclude Include="numfmt.h" />
     <ClInclude Include="spinlock.h" />
@@ -119,24 +121,9 @@
     <None Include="lang\winfile_de-DE.dlg">
       <Filter>lang</Filter>
     </None>
-    <None Include="lang\res_tr-TR.rc">
-      <Filter>lang</Filter>
-    </None>
-    <None Include="lang\suggest_tr-TR.db">
-      <Filter>lang</Filter>
-    </None>
-    <None Include="lang\winfile_tr-TR.dlg">
-      <Filter>lang</Filter>
-    </None>
-    <None Include="lang\res_pt-PT.rc">
-      <Filter>lang</Filter>
-    </None>
-    <None Include="lang\suggest_pt-PT.db">
-      <Filter>lang</Filter>
-    </None>
-    <None Include="lang\winfile_pt-PT.dlg">
-      <Filter>lang</Filter>
-    </None>
+    <None Include="lang\res_tr-TR.rc" />
+    <None Include="lang\suggest_tr-TR.db" />
+    <None Include="lang\winfile_tr-TR.dlg" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lang">
