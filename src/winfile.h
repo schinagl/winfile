@@ -121,7 +121,7 @@ INT atoiW(LPWSTR sz);
 
 #define MAX_WINDOWS         27
 #define MAX_UNC             10
-#define OFFSET_UNC          'Z' - 'A' + 1
+#define OFFSET_UNC          ('Z' - 'A' + 1)
 #define MAX_DRIVES          OFFSET_UNC + MAX_UNC
 
 // struct for volume info
@@ -327,8 +327,9 @@ typedef struct {
    //
    // *2 since may have huge filter
    //
-   WCHAR szDir[2*MAXPATHLEN];
-   WCHAR szRoot[MAXPATHLEN];
+   TCHAR szDir[2*MAXPATHLEN];
+   TCHAR szRoot[MAXPATHLEN];
+   INT dwDriveNumber;
 
    //
    // Next block of fields must be together (11 DWORDS)
@@ -457,6 +458,7 @@ DRIVE AddUNCDrive(LPTSTR path);
 DRIVE RemoveUNCDrive(LPCTSTR path);
 DRIVE FindUNCDrive(LPCTSTR path, PDWORD pdwFreeDriveSlot);
 BOOL FindUNCLoop(LPCTSTR path);
+VOID SetUNCDrive(LPTSTR path, DWORD aFreeDriveSlot);
 
 // WFDIR.C
 

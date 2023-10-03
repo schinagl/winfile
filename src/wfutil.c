@@ -1650,6 +1650,13 @@ DRIVE FindUNCDrive(LPCTSTR path, PDWORD pdwFreeDriveSlot)
    return 0;
 }
 
+VOID SetUNCDrive(LPTSTR path, DWORD aFreeDriveSlot)
+{
+   lstrcpy(aDriveInfo[aFreeDriveSlot].szRoot, path);
+   lstrcpy(aDriveInfo[aFreeDriveSlot].szRootBackslash, path);
+   AddBackslash(aDriveInfo[aFreeDriveSlot].szRootBackslash);
+}
+
 // Returns drive-id if possible. If not returns 0
 // Possible failure reasons: Exceeded number of free numbered drives or UNC cirularity
 DRIVE AddUNCDrive(LPTSTR path)
@@ -1664,9 +1671,7 @@ DRIVE AddUNCDrive(LPTSTR path)
    drive = FindUNCDrive(path, &dwFreeDriveSlot);
    if (!drive && dwFreeDriveSlot) {
       // Havent't found an existing slot, so add new to first free found
-      lstrcpy(aDriveInfo[dwFreeDriveSlot].szRoot, path);
-      lstrcpy(aDriveInfo[dwFreeDriveSlot].szRootBackslash, path);
-      AddBackslash(aDriveInfo[dwFreeDriveSlot].szRootBackslash);
+      SetUNCDrive(path, dwFreeDriveSlot);
       drive = dwFreeDriveSlot;
    }
 
