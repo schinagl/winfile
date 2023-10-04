@@ -874,6 +874,8 @@ CreateSavedWindows()
 
    } while (*buf);
 
+   LoadUNCDrives();
+
    //
    // if nothing was saved create a tree for the current drive
    //

@@ -117,6 +117,8 @@ DO_AGAIN:
                szPath,
                aDriveInfo[drive].szRoot,
                drive - OFFSET_UNC);
+            
+            aDriveInfo[drive].bDirtyPersist = TRUE;
          }
 
          // the dir is an ANSI string (?)
@@ -136,6 +138,8 @@ DO_AGAIN:
 
       goto DO_AGAIN;
    }
+
+   SaveUNCDrives();
 
    // Save CachedPath and GotoCachePunctuation
    WritePrivateProfileString(szSettings, szCachedPath, szCachedPathIni, szTheINIFile);
