@@ -111,23 +111,38 @@ DrawItem(
    else
    {
       //
-      //  Set Text color of Compressed items to BLUE and Encrypted items
-      //  to GREEN.
+      // Set Text color of Compressed items to BLUE, Encrypted items to GREEN, 
+      // Hardlinks to orange, and Compressed Hardlinks to Dark Cyan
       //
-      //  LATER:
-      //  Should allow for User selection in the future.
-      //
-      if ((lpxdta) && (lpxdta->dwAttrs & ATTR_COMPRESSED))
+      if (lpxdta)
       {
-         rgbText = SetTextColor(hDC, RGB(0, 0, 255));
-      }
-      else if ((lpxdta) && (lpxdta->dwAttrs & ATTR_ENCRYPTED))
-      {
-         rgbText = SetTextColor(hDC, RGB(0, 192, 0));
-      }
-      else
-      {
-         rgbText = SetTextColor(hDC, GetSysColor(COLOR_WINDOWTEXT));
+         if (lpxdta->dwAttrs & ATTR_COMPRESSED)
+         {
+            if (lpxdta->dwAttrs & ATTR_HARDLINK)
+            {
+               // Dark Cyan
+               rgbText = SetTextColor(hDC, RGB(25,160,255));
+            }
+            else
+            {
+               // Blue
+               rgbText = SetTextColor(hDC, RGB(0, 0, 255));
+            }
+         }
+         else if (lpxdta->dwAttrs & ATTR_ENCRYPTED)
+         {
+            // Green
+            rgbText = SetTextColor(hDC, RGB(0, 192, 0));
+         }
+         else if (lpxdta->dwAttrs & ATTR_HARDLINK)
+         {
+            // Orange
+            rgbText = SetTextColor(hDC, RGB(255, 165, 0));
+         }
+         else
+         {
+            rgbText = SetTextColor(hDC, GetSysColor(COLOR_WINDOWTEXT));
+         }
       }
       rgbBackground = SetBkColor(hDC, GetSysColor(COLOR_WINDOW));
    }

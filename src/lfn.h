@@ -28,6 +28,8 @@ typedef struct {
    DWORD err;                  // error info if failure.
    WIN32_FIND_DATA fd;         // FindFirstFile() data structure;
    INT   nSpaceLeft;           // Space left for deeper paths
+   WCHAR path[MAXPATHLEN];
+   size_t pathLen;
 } LFNDTA, *LPLFNDTA, * PLFNDTA;
 
 VOID  LFNInit( VOID );

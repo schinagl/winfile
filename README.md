@@ -55,6 +55,7 @@ selecting one changes to that directory.  Default = c:\\. Configure via Winfile.
 24. UNC Path support via CTRL-G. Shows up as 'digit drive' 0: - 9:. Select it either via CTRL-0 ... CTRL-9 or from drive drop-down. Remove UNC digit drive with CTRL-W
 25. Current username is shown in caption.
 26. Contains statically linked versions to be used for WinPE
+27. Show hardlinks in orange
 
 ## Contributing
 

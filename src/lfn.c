@@ -71,6 +71,13 @@ WFFindFirst(
 
    lpFind->fd.dwFileAttributes &= ATTR_USED;
 
+   // Save search path
+   lstrcpy(lpFind->path, lpName);
+   StripFilespec(lpFind->path);
+   if (lpFind->path[0])
+      AddBackslash(lpFind->path);
+   lpFind->pathLen = wcslen(lpFind->path);
+
    if (Wow64RevertWow64FsRedirection != NULL)
    {
        Wow64RevertWow64FsRedirection(oldValue);
@@ -161,6 +168,38 @@ WFFindNext(LPLFNDTA lpFind)
           } else if (lpFind->fd.dwReserved0 == IO_REPARSE_TAG_SYMLINK) {
               lpFind->fd.dwFileAttributes |= ATTR_SYMBOLIC;
           }
+      }
+      else {
+         // Get the refcount of hardlinks if not on an UNC drive
+         if (!(lpFind->fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && 
+            lpFind->path[0] &&
+            !ISUNCPATH(lpFind->path) ) {
+
+            lstrcpy(&lpFind->path[lpFind->pathLen], lpFind->fd.cFileName);
+
+            // Read out the refcount of hardlinks
+            HANDLE	fh = CreateFileW(lpFind->path,
+               FILE_READ_ATTRIBUTES,
+               FILE_SHARE_READ,
+               NULL,
+               OPEN_EXISTING,
+               FILE_ATTRIBUTE_NORMAL,
+               NULL
+            );
+
+            // Chop off the filename
+            lpFind->path[lpFind->pathLen] = 0;
+
+            // If we have a valid handle, we can read the refcount
+            if (INVALID_HANDLE_VALUE != fh) {
+
+               BY_HANDLE_FILE_INFORMATION	FileInformation;
+               BOOL r = GetFileInformationByHandle(fh, &FileInformation);
+               if (FileInformation.nNumberOfLinks > 1)
+                  lpFind->fd.dwFileAttributes |= ATTR_HARDLINK;
+               CloseHandle(fh);
+            }
+         }
       }
 
       if (Wow64RevertWow64FsRedirection != NULL)
