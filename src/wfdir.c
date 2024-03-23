@@ -144,6 +144,10 @@ DrawItem(
             rgbText = SetTextColor(hDC, GetSysColor(COLOR_WINDOWTEXT));
          }
       }
+      else
+      {
+         rgbText = SetTextColor(hDC, GetSysColor(COLOR_WINDOWTEXT));
+      }
       rgbBackground = SetBkColor(hDC, GetSysColor(COLOR_WINDOW));
    }
 

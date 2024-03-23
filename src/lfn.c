@@ -170,14 +170,13 @@ WFFindNext(LPLFNDTA lpFind)
           }
       }
       else {
-         // Get the refcount of hardlinks if not on an UNC drive
-         if (!(lpFind->fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && 
+         // Get the refcount of hardlinks if not on a Remote drive
+         if (!(lpFind->fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
             lpFind->path[0] &&
-            !ISUNCPATH(lpFind->path) ) {
-
-            lstrcpy(&lpFind->path[lpFind->pathLen], lpFind->fd.cFileName);
+            !IsRemoteDrive(DRIVEID(lpFind->path))) {
 
             // Read out the refcount of hardlinks
+            lstrcpy(&lpFind->path[lpFind->pathLen], lpFind->fd.cFileName);
             HANDLE	fh = CreateFileW(lpFind->path,
                FILE_READ_ATTRIBUTES,
                FILE_SHARE_READ,
