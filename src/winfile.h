@@ -853,7 +853,11 @@ BOOL  RectTreeItem(HWND hwndLB, INT iItem, BOOL bFocusOn);
 #define ATTR_COMPRESSED     FILE_ATTRIBUTE_COMPRESSED   // == 0x0800
 #define ATTR_NOT_INDEXED    FILE_ATTRIBUTE_NOT_CONTENT_INDEXED // == 0x2000
 #define ATTR_ENCRYPTED      FILE_ATTRIBUTE_ENCRYPTED    // == 0x4000
+#ifndef FILE_ATTRIBUTE_INTEGRITY_STREAM
+#define ATTR_HARDLINK       0x8000                      // XP SDK doesn't have this
+#else
 #define ATTR_HARDLINK       FILE_ATTRIBUTE_INTEGRITY_STREAM    // == 0x8000, abuse INTEGRITY_STREAM
+#endif
 #define ATTR_USED           0xEDBF                      // ATTR we use that are returned from FindFirst/NextFile
 
 #define ATTR_PARENT         0x0040  // my hack DTA bits
