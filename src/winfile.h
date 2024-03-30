@@ -222,9 +222,6 @@ INT atoiW(LPWSTR sz);
 #define FM_EXT_PROC_ENTRYA "FMExtensionProc"
 #define FM_EXT_PROC_ENTRYW "FMExtensionProcW"
 
-#define UNDELETE_ENTRYA "UndeleteFile"
-#define UNDELETE_ENTRYW "UndeleteFileW"
-
 #define FILE_NOTIFY_CHANGE_FLAGS (FILE_NOTIFY_CHANGE_FILE_NAME | \
    FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_SIZE)
 
@@ -1319,7 +1316,6 @@ Extern TCHAR        szSaveCharset[]         EQ( TEXT("Charset") );
 JAPANEND
 
 Extern TCHAR        szAddons[]              EQ( TEXT("AddOns") );
-Extern TCHAR        szUndelete[]            EQ( TEXT("UNDELETE.DLL") );
 
 Extern TCHAR        szDefPrograms[]         EQ( TEXT("EXE COM BAT PIF") );
 Extern TCHAR        szRoamINIPath[]         EQ( TEXT("\\Microsoft\\Winfile"));
@@ -1400,7 +1396,6 @@ Extern HANDLE hfmifsDll EQ( NULL );
 
 Extern HANDLE  hAccel            EQ( NULL );
 Extern HINSTANCE  hAppInstance;
-Extern HANDLE  hModUndelete      EQ( NULL );
 
 Extern HBITMAP  hbmBitmaps         EQ( NULL );
 Extern HDC  hdcMem                 EQ( NULL );
@@ -1455,12 +1450,6 @@ Extern WCHAR wszWinfileHelp[] EQ( L"WINFILE.HLP" );
 
 Extern INT iNumExtensions     EQ( 0 );
 Extern EXTENSION extensions[MAX_EXTENSIONS];
-
-Extern DWORD (APIENTRY *lpfpUndelete)(HWND, LPTSTR) EQ( NULL );
-
-#ifdef UNICODE
-Extern BOOL  bUndeleteUnicode EQ( FALSE );
-#endif
 
 Extern HHOOK hhkMsgFilter     EQ( NULL );
 
