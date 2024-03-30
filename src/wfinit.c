@@ -1818,7 +1818,7 @@ LoadUxTheme(VOID)
   // Let the system handle errors here
   //
   uErrorMode = SetErrorMode(0);
-  hUxTheme = LoadLibrary(UXTHEME_DLL);
+  hUxTheme = LoadSystemLibrary(UXTHEME_DLL);
   SetErrorMode(uErrorMode);
 
   if (!hUxTheme)
