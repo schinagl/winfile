@@ -1,3 +1,6 @@
+# Changes in v10.x compared to v10.x (????? 202x)
+
+3. Show hardlinks in orange
 
 ## Changes in v10.3 compared to v10.2 (March 2024)
 
