@@ -21,6 +21,10 @@
 
 #include "dbg.h"
 
+#define SECURITY_WIN32
+#include "security.h"
+#include "secext.h"
+
 TCHAR szNTlanman[] = TEXT("ntlanman.dll");
 TCHAR szHelv[] = TEXT("MS Shell Dlg");
 /*
@@ -1402,6 +1406,11 @@ JAPANEND
 
    }
 
+   // Show Username in main window
+   wchar_t szUsername[MAXSUGGESTLEN];
+   size_t dwUsername = MAXSUGGESTLEN - wcslen(szTitle) - 7 - wcslen(szAdministrator);
+   GetUserNameExW(NameSamCompatible, szUsername, &(ULONG)dwUsername);
+   wsprintf(szTitle, L"%s - [%s] %s", szTitle, szUsername, IsUserAnAdmin() ? szAdministrator : szNULL);
 
    if (!CreateWindowEx(dwExStyle, szFrameClass, szTitle, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,
       win.rc.left, win.rc.top, win.rc.right, win.rc.bottom,

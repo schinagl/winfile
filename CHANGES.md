@@ -1,3 +1,5 @@
+## Changes in v10.x compared to v10.x (????? 202x)
+2. Current username is shown in caption.
 
 ## Changes in v10.3 compared to v10.2 (March 2024)
 
