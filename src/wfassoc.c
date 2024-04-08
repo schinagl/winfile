@@ -1762,8 +1762,8 @@ ClassesRead(HKEY hKey,
    UINT  uNameSiz;
    FILETIME ftLastWrite;
    DWORD dwError1, dwError2;
-   PFILETYPE pFileTypePrev, pFileType;
-   PEXT pExtPrev, pExt;
+   PFILETYPE pFileTypePrev, pFileType = NULL;
+   PEXT pExtPrev, pExt = NULL;
    BOOL retval;
    INT iKey;
    TCHAR szIdent[DESCSIZ+COUNTOF(szFileManPrefix)];

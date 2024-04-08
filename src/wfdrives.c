@@ -753,7 +753,7 @@ DrivesWndProc(HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam)
           case VK_F6:   // like excel
           case VK_TAB:
                 {
-                   HWND hwndTree, hwndDir, hwndSet, hwndNext;
+                   HWND hwndTree, hwndDir, hwndSet, hwndNext = NULL;
                    BOOL bDir;
                    BOOL bChangeDisplay = FALSE;
 
