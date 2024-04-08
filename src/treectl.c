@@ -616,19 +616,19 @@ ReadDirLevel(
    LPTSTR  szAutoExpand,
    BOOL bPartialSort)
 {
-   LPWSTR      szEndPath;
+   LPWSTR    szEndPath;
    LFNDTA    lfndta;
    INT       iNode;
    BOOL      bFound;
-   PDNODE     pNode;
+   PDNODE    pNode;
    BOOL      bAutoExpand;
    BOOL      bResult = TRUE;
    DWORD     dwView;
    HWND      hwndParent;
    HWND      hwndDir;
    LPXDTALINK lpStart;
-   LPXDTA*  plpxdta;
-   LPXDTA   lpxdta;
+   LPXDTA*   plpxdta = NULL;
+   LPXDTA    lpxdta = NULL;
    INT       count;
 
    UINT      uYieldCount = 0;
@@ -1030,7 +1030,7 @@ StealTreeData(
    HWND hwndLB,
    LPWSTR szDir)
 {
-   HWND hwndSrc, hwndT;
+   HWND hwndSrc, hwndT = NULL;
    WCHAR szSrc[MAXPATHLEN];
    DWORD dwView;
    DWORD dwAttribs;
@@ -1150,7 +1150,7 @@ FillTreeListbox(HWND hwndTC,
    BOOL bFullyExpand,
    BOOL bDontSteal)
 {
-   PDNODE pNode;
+   PDNODE pNode = NULL;
    INT   iNode;
    DWORD dwAttribs;
    TCHAR  szTemp[MAXPATHLEN+1] = SZ_ACOLONSLASH;
@@ -1240,7 +1240,9 @@ FillTreeListbox(HWND hwndTC,
       FindItemFromPath(hwndLB, szDefaultDir, FALSE, NULL, &pNode);
    }
 
-   SendMessage(hwndLB, LB_SELECTSTRING, (WPARAM)-1, (LPARAM)pNode);
+   if (pNode != NULL) {
+      SendMessage(hwndLB, LB_SELECTSTRING, (WPARAM)-1, (LPARAM)pNode);
+   }
 
    UpdateStatus(GetParent(hwndTC));  // Redraw the Status Bar
 
@@ -3203,6 +3205,7 @@ SameSelection:
          BOOL bDir;
          BOOL bChangeDisplay = FALSE;
 
+         hwndNext = NULL;
          TypeAheadString('\0', NULL);
          GetTreeWindows(hwndParent, NULL, &hwndDir);
 
@@ -3240,7 +3243,7 @@ SameSelection:
                }
                else
                {
-                   hwndSet = hwnd;
+                  hwndSet = hwnd;
                }
             }
          }

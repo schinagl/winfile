@@ -1063,7 +1063,7 @@ UpdateDriveListWorker(VOID)
 {
    INT cRealDrives = 0;
    INT i;
-   HANDLE hEnum;
+   HANDLE hEnum = NULL;
    LPTCH pcBuf;       // 16k buffer.  blech.
    DWORD dwEntries;
    DRIVE drive;
@@ -1334,11 +1334,13 @@ EnumRetry:
       rgiDriveReal[iUpdatePhantom][i] = 0;
    }
 
-   if (bOpenEnumSucceed)
+   if (bOpenEnumSucceed) {
       WNetCloseEnum(hEnum);
+   }
 
-   if (pcBuf)
+   if (pcBuf) {
       LocalFree((HANDLE)pcBuf);
+   }
 
 
    PostMessage(hwndFrame, FS_UPDATEDRIVETYPECOMPLETE, (WPARAM)cRealDrives, 0L);
