@@ -534,10 +534,10 @@ CreateDirWindow(
    INT dxSplit;
 
    if (hwndActive == hwndSearch) {
-      bReplaceOpen = FALSE;
-      dxSplit = -1;
+	   bReplaceOpen = FALSE;
+	   dxSplit = -1;
    } else {
-      dxSplit = GetSplit(hwndActive);
+	   dxSplit = GetSplit(hwndActive);
    }
 
    //
@@ -551,45 +551,56 @@ CreateDirWindow(
       return hwndT;
    }
 
+   BOOLEAN bDriveChanged = FALSE;
+
    //
    // Are we replacing the contents of the currently active child?
    //
    if (bReplaceOpen) {
-      DRIVE drive = DRIVEID(szPath);
-      for (INT i = 0; i < cDrives; i++) {
-         if (drive == rgiDrive[i]) {
-            // if not already selected, do so now
+	   DRIVE drive = DRIVEID(szPath);
+	   for (INT i = 0; i<cDrives; i++)
+	   {
+		   if (drive == rgiDrive[i])
+		   {
+			   // if not already selected, do so now
             if (i != SendMessage(hwndDriveList, CB_GETCURSEL, i, 0L)) {
-               SelectToolbarDrive(i);
-            }
-            break;
-         }
-      }
+				   SelectToolbarDrive(i);
+               bDriveChanged = TRUE;
+			   }
+			   break;
+		   }
+	   }
 
       if (hwndT = HasDirWindow(hwndActive)) {
-         WCHAR szFileSpec[MAXPATHLEN];
+		   WCHAR szFileSpec[MAXPATHLEN];
 
-         AddBackslash(szPath);                   // default to all files
-         SendMessage(hwndT, FS_GETFILESPEC, COUNTOF(szFileSpec), (LPARAM)szFileSpec);
-         lstrcat(szPath, szFileSpec);
-         SendMessage(hwndT, FS_CHANGEDISPLAY, CD_PATH, (LPARAM)szPath);
-         StripFilespec(szPath);
+		   AddBackslash(szPath);                   // default to all files
+		   SendMessage(hwndT, FS_GETFILESPEC, COUNTOF(szFileSpec), (LPARAM)szFileSpec);
+		   lstrcat(szPath, szFileSpec);
+		   SendMessage(hwndT, FS_CHANGEDISPLAY, CD_PATH, (LPARAM)szPath);
+		   StripFilespec(szPath);
+	   }
+
+	   //
+	   // update the tree if necessary
+	   //
+
+	   if (hwndT = HasTreeWindow(hwndActive))
+	   {
+		   SendMessage(hwndT, TC_SETDRIVE, 0, (LPARAM)(szPath));
+	   }
+
+	   //
+	   // Update the status in case we are "reading"
+	   //
+	   UpdateStatus(hwndActive);
+      if (bDriveChanged)
+      {
+         InvalidateRect(hwndDriveBar, NULL, TRUE);
+         UpdateWindow(hwndDriveBar);
       }
 
-      //
-      // update the tree if necessary
-      //
-      ;
-      if (hwndT = HasTreeWindow(hwndActive)) {
-         SendMessage(hwndT, TC_SETDRIVE, 0, (LPARAM)(szPath));
-      }
-
-      //
-      // Update the status in case we are "reading"
-      //
-      UpdateStatus(hwndActive);
-
-      return hwndActive;
+	   return hwndActive;
    }
 
    AddBackslash(szPath);                   // default to all files
@@ -1165,10 +1176,10 @@ AppCommandProc(DWORD id)
 		break;
 
    case IDM_CLOSEWINDOW:
-      {
-         HWND      hwndActive;
+       {
+           HWND      hwndActive;
 
-         hwndActive = (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, 0L);
+           hwndActive = (HWND)SendMessage(hwndMDIClient, WM_MDIGETACTIVE, 0, 0L);
 
          SendMessage(hwndActive, FS_GETDIRECTORY, COUNTOF(szPath), (LPARAM)szPath);
          if (ISUNCPATH(szPath))
@@ -1178,9 +1189,9 @@ AppCommandProc(DWORD id)
 
          }
          else
-            PostMessage(hwndActive, WM_CLOSE, 0, 0L);
-      }
-      break;
+           PostMessage(hwndActive, WM_CLOSE, 0, 0L);
+       }
+       break;
 
    case IDM_SELECT:
 
