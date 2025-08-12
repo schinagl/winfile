@@ -1968,73 +1968,76 @@ HMODULE LoadSystemLibrary(LPCTSTR FileName)
 }
 
 INT naturalCompare(LPTSTR a, LPTSTR b) {
-  if (!a && !b) return 0;
-  if (!a) return -1;
-  if (!b) return 1;
+   if (!a && !b) return 0;
+   if (!a) return -1;
+   if (!b) return 1;
 
-  LPTSTR pA = a;
-  LPTSTR pB = b;
+   LPTSTR pA = a;
+   LPTSTR pB = b;
 
-  while (*pA && *pB) {
-    // If both characters are digits, compare numerically
-    if (iswdigit(*pA) && iswdigit(*pB)) {
-      // Skip leading zeros but keep at least one digit
-      while (*pA == L'0' && *(pA + 1) && iswdigit(*(pA + 1))) {
-        pA++;
+   while (*pA && *pB) {
+      // If both characters are digits, compare numerically
+      if (iswdigit(*pA) && iswdigit(*pB)) {
+         // Skip leading zeros but keep at least one digit
+         while (*pA == L'0' && *(pA + 1) && iswdigit(*(pA + 1))) {
+            pA++;
+         }
+         while (*pB == L'0' && *(pB + 1) && iswdigit(*(pB + 1))) {
+            pB++;
+         }
+
+         // Find the end of numeric parts
+         LPTSTR numStartA = pA;
+         LPTSTR numStartB = pB;
+
+         while (*pA && iswdigit(*pA)) {
+            pA++;
+         }
+         while (*pB && iswdigit(*pB)) {
+            pB++;
+         }
+
+         // Compare by length first (longer number is larger)
+         INT lenA = (INT)(pA - numStartA);
+         INT lenB = (INT)(pB - numStartB);
+
+         if (lenA != lenB) {
+            return (lenA < lenB) ? -1 : 1;
+         }
+
+         // Same length, compare lexicographically using Windows string functions
+         // Create temporary null-terminated strings for comparison
+         TCHAR tempA[32], tempB[32];
+         INT copyLen = lenA < 31 ? lenA : 31;
+
+         // Use lstrcpy-style approach with manual copying
+         INT i;
+         for (i = 0; i < copyLen; i++) {
+            tempA[i] = numStartA[i];
+            tempB[i] = numStartB[i];
+         }
+         tempA[copyLen] = L'\0';
+         tempB[copyLen] = L'\0';
+
+         INT result = lstrcmpi(tempA, tempB);  // Case-insensitive comparison
+         if (result != 0) {
+            return result;
+         }
+
+         // Numbers are equal, continue with next part
       }
-      while (*pB == L'0' && *(pB + 1) && iswdigit(*(pB + 1))) {
-        pB++;
+      else {
+         // Compare characters case-insensitively
+         TCHAR charA = (TCHAR)CharUpper((LPWSTR)(ULONG_PTR)*pA);
+         TCHAR charB = (TCHAR)CharUpper((LPWSTR)(ULONG_PTR)*pB);
+
+         if (charA != charB) {
+            return (charA < charB) ? -1 : 1;
+         }
+         pA++;
+         pB++;
       }
-
-      // Find the end of numeric parts
-      LPTSTR numStartA = pA;
-      LPTSTR numStartB = pB;
-
-      while (*pA && iswdigit(*pA)) {
-        pA++;
-      }
-      while (*pB && iswdigit(*pB)) {
-        pB++;
-      }
-
-      // Compare by length first (longer number is larger)
-      INT lenA = (INT)(pA - numStartA);
-      INT lenB = (INT)(pB - numStartB);
-
-      if (lenA != lenB) {
-        return (lenA < lenB) ? -1 : 1;
-      }
-
-      // Same length, compare lexicographically using Windows string functions
-      // Create temporary null-terminated strings for comparison
-      TCHAR tempA[32], tempB[32];
-      INT copyLen = lenA < 31 ? lenA : 31;
-
-      // Use lstrcpy-style approach with manual copying
-      INT i;
-      for (i = 0; i < copyLen; i++) {
-        tempA[i] = numStartA[i];
-        tempB[i] = numStartB[i];
-      }
-      tempA[copyLen] = L'\0';
-      tempB[copyLen] = L'\0';
-
-      INT result = lstrcmp(tempA, tempB);
-      if (result != 0) {
-        return result;
-      }
-
-      // Numbers are equal, continue with next part
-    }
-    else {
-      // Compare characters normally
-      if (*pA != *pB) {
-        return (*pA < *pB) ? -1 : 1;
-      }
-      pA++;
-      pB++;
-    }
-  }
+   }
 
   // If we reach here, one string is a prefix of another
   if (*pA == L'\0' && *pB == L'\0') return 0;  // strings are equal
