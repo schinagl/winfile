@@ -268,23 +268,16 @@ ComparePath(PDNODE p1, PDNODE p2)
 
       return 0;       // equal (base case)
 
-   } else {
+   }
+   else {
 
-      ret = ComparePath(p1->pParent, p2->pParent);
+     ret = ComparePath(p1->pParent, p2->pParent);
 
-      if (ret == 0) {
-         // parents are equal
+     if (ret == 0) {
+       // parents are equal
+       ret = naturalCompare(p1->szName, p2->szName);
 
-         ret = lstrcmpi(p1->szName, p2->szName);
-#if 0
-         {
-            TCHAR buf[200];
-            wsprintf(buf, TEXT("Compare(%s, %s) -> %d\r\n"), p1->szName, p2->szName, ret);
-            OutputDebugString(buf);
-         }
-#endif
-
-      }
+     }
 
       // not equal parents, propagate up the call tree
       return ret;

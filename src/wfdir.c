@@ -2653,10 +2653,11 @@ CompareDTA(
       }
 
    case IDD_NAME:
-
-CompareNames:
-      ret = lstrcmpi(MemGetFileName(lpItem1), MemGetFileName(lpItem2));
-      break;
+     CompareNames:
+     {
+       ret = naturalCompare(MemGetFileName(lpItem1), MemGetFileName(lpItem2));
+       break;
+     }
    }
 
 CDDone:

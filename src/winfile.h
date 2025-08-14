@@ -592,6 +592,7 @@ VOID  WFHelp(HWND hwnd);
 LONG  WFRegGetValueW(HKEY hkey, LPCWSTR lpSubKey, LPCWSTR lpValue, DWORD dwFlags, LPDWORD pdwType, PVOID pvData, LPDWORD pcbData);
 LPTSTR GetFullPathInSystemDirectory(LPCTSTR FileName);
 HMODULE LoadSystemLibrary(LPCTSTR FileName);
+BOOL naturalCompare(LPTSTR a, LPTSTR b);
 
 // WFDRIVES.C
 
