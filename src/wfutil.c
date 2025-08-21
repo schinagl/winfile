@@ -2028,8 +2028,8 @@ INT naturalCompare(LPTSTR a, LPTSTR b) {
       }
       else {
          // Compare characters case-insensitively
-         TCHAR charA = (TCHAR)CharUpper((LPWSTR)(ULONG_PTR)*pA);
-         TCHAR charB = (TCHAR)CharUpper((LPWSTR)(ULONG_PTR)*pB);
+         TCHAR charA = (TCHAR)CharLower((LPWSTR)(ULONG_PTR)*pA);
+         TCHAR charB = (TCHAR)CharLower((LPWSTR)(ULONG_PTR)*pB);
 
          if (charA != charB) {
             return (charA < charB) ? -1 : 1;
