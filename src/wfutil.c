@@ -1835,6 +1835,7 @@ LONG WFRegGetValueW(HKEY hkey, LPCWSTR lpSubKey, LPCWSTR lpValue, DWORD dwFlags,
             dwOriginalSize = *pcbData;
         }
 
+        dwLocalSize = dwOriginalSize;
         dwStatus = RegQueryValueEx(hkeySub, lpValue, NULL, &dwLocalType, pvData, &dwLocalSize);
         if (dwStatus != ERROR_SUCCESS)
         {
